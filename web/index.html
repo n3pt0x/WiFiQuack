@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFiQuack</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span class="duck-icon">🐤</span>
+            WiFiQuack
+        </h1>
+        <p class="subtitle">Write your DuckyScript payload below and click <strong>Run</strong>.</p>
+
+        <form id="duckyForm">
+            <textarea id="payload" placeholder="GUI r&#10;DELAY 500&#10;STRING notepad&#10;ENTER">GUI r
+DELAY 500
+STRING notepad
+ENTER</textarea>
+            <br>
+        <button type="submit">Run</button>
+        <button type="button" id="download">Download</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script src="main.js"></script>
+</body>
+</html>
