@@ -3,11 +3,10 @@
 
 #include <WiFi.h>
 
-const char *WIFI_SSID = "WiFiQuack";
-const char *WIFI_PASSPHRASE = "WiFiQuack";
+static const char* WIFI_SSID = "WiFiQuack";
+static const char* WIFI_PASSPHRASE = "WiFiQuack";
 
 bool startWiFiAP();
 void printWiFiInfos();
-void handleWiFiClients();
 
 #endif

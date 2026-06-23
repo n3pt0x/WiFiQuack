@@ -17,17 +17,3 @@ void printWiFiInfos() {
     Serial.print("IP Address: ");
     Serial.println(WiFi.softAPIP());
 }
-
-void handleWiFiClients() {
-    static int lastStationCount = 0;
-    int currentStationCount = WiFi.softAPgetStationNum();
-    
-    if (lastStationCount != currentStationCount) {
-        if (lastStationCount < currentStationCount) {
-            Serial.println("New Station Connected !");
-        } else {
-            Serial.println("Station Disconnected !");
-        }
-        lastStationCount = currentStationCount;
-    }
-}
