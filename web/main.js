@@ -1,23 +1,23 @@
-const payload = document.getElementById("payload").value;
-const status = document.getElementById("status");
-
 document.getElementById("duckyForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    const payload = document.getElementById("payload").value;
+    const status = document.getElementById("status");
     
     status.textContent = "Payload sending ...";
 
     try {
         const response = await fetch('/run', {
-            method: POST,
+            method: 'POST',
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 },
-            body: "payload=" + encodeURIComponent(paydload)
+            body: "script=" + encodeURIComponent(payload)
         });    
         const result = await response.text();
         status.textContent = `${result}`;
-    } catch {
-        status.textContent = `Error: ${result}`;
+    } catch (error) {
+        status.textContent = `Error: ${error.message}`;
     }
 });
 
