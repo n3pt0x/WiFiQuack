@@ -1,6 +1,3 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 const long SERIAL_BAUD = 115200;
-
-#endif

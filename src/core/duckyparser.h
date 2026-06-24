@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include <Keyboard.h>
-#include "HID_Keyboard.h"
+#include <HID_Keyboard.h>
 
 namespace duckyparser {
     enum Layout : uint8_t {
