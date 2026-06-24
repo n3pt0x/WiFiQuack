@@ -1,27 +1,13 @@
 #include "duckyparser.h"
+#include "keyboard_utils.h"
 
 namespace duckyparser {
 
     int defaultDelay = 0;
     String lastLine = "";
-    Layout currentLayout = LAYOUT_US;
 
-    void setLayout(Layout layout) {
-        currentLayout = layout;
-        Keyboard.end();
-        switch (layout) {
-            case LAYOUT_FR:
-                Keyboard.begin(KeyboardLayout_fr_FR);
-                break;
-            case LAYOUT_US:
-            default:
-                Keyboard.begin(KeyboardLayout_en_US);
-                break;
-        }
-    }
-
-    void begin(Layout initialLayout) {
-        setLayout(initialLayout);
+    void begin(keyboard_utils::Layout initialLayout) {
+        keyboard_utils::setLayout(initialLayout);
         reset();
     }
 
@@ -35,24 +21,16 @@ namespace duckyparser {
             Keyboard.write(KEY_RETURN);
         }
         else if (command == "GUI" || command == "WINDOWS") {
-            Keyboard.press(KEY_LEFT_GUI);
-            delay(50);
-            Keyboard.release(KEY_LEFT_GUI);
+            keyboard_utils::pressKey(KEY_LEFT_GUI);
         }
         else if (command == "CTRL" || command == "CONTROL") {
-            Keyboard.press(KEY_LEFT_CTRL);
-            delay(50);
-            Keyboard.release(KEY_LEFT_CTRL);
+            keyboard_utils::pressKey(KEY_LEFT_CTRL);
         }
         else if (command == "SHIFT") {
-            Keyboard.press(KEY_LEFT_SHIFT);
-            delay(50);
-            Keyboard.release(KEY_LEFT_SHIFT);
+            keyboard_utils::pressKey(KEY_LEFT_SHIFT);
         }
         else if (command == "ALT") {
-            Keyboard.press(KEY_LEFT_ALT);
-            delay(50);
-            Keyboard.release(KEY_LEFT_ALT);
+            keyboard_utils::pressKey(KEY_LEFT_ALT);
         }
         else if (command == "TAB") {
             Keyboard.write(KEY_TAB);
@@ -113,37 +91,29 @@ namespace duckyparser {
             }
             else if (command == "GUI" || command == "WINDOWS") {
                 if (param.length() == 1) {
-                    Keyboard.press(KEY_LEFT_GUI);
-                    Keyboard.print(param[0]);
-                    Keyboard.releaseAll();
+                    keyboard_utils::pressCombination(KEY_LEFT_GUI, param[0]);
                 }
             }
             else if (command == "CTRL" || command == "CONTROL") {
                 if (param.length() == 1) {
-                    Keyboard.press(KEY_LEFT_CTRL);
-                    Keyboard.print(param[0]);
-                    Keyboard.releaseAll();
+                    keyboard_utils::pressCombination(KEY_LEFT_CTRL, param[0]);
                 }
             }
             else if (command == "SHIFT") {
                 if (param.length() == 1) {
-                    Keyboard.press(KEY_LEFT_SHIFT);
-                    Keyboard.print(param[0]);
-                    Keyboard.releaseAll();
+                    keyboard_utils::pressCombination(KEY_LEFT_SHIFT, param[0]);
                 }
             }
             else if (command == "ALT") {
                 if (param.length() == 1) {
-                    Keyboard.press(KEY_LEFT_ALT);
-                    Keyboard.print(param[0]);
-                    Keyboard.releaseAll();
+                    keyboard_utils::pressCombination(KEY_LEFT_ALT, param[0]);
                 }
             }
             else if (command == "LOCALE") {
                 if (param == "FR") {
-                    setLayout(LAYOUT_FR);
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_FR);
                 } else if (param == "US") {
-                    setLayout(LAYOUT_US);
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_US);
                 } else {
                     Serial.print("Unknown locale: ");
                     Serial.println(param);
