@@ -7,8 +7,14 @@
 namespace keyboard_utils {
 
     enum Layout : uint8_t {
+        LAYOUT_DE,
         LAYOUT_US,
-        LAYOUT_FR
+        LAYOUT_ES,
+        LAYOUT_FR,
+        LAYOUT_IT,
+        LAYOUT_PT,
+        LAYOUT_SE,
+        LAYOUT_DK
     };
 
     void setLayout(Layout layout);
