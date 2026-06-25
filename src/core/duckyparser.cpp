@@ -73,7 +73,7 @@ namespace duckyparser {
                 // comment
             }
             else if (command == "STRING") {
-                Keyboard.print(param);
+                keyboard_utils::sendString(param);
             }
             else if (command == "DELAY") {
                 int delayTime = param.toInt();
