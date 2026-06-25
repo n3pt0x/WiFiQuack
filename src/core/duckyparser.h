@@ -8,4 +8,5 @@
 namespace duckyparser {
     void begin(keyboard_utils::Layout initialLayout = keyboard_utils::LAYOUT_US);
     bool execute(const String& script);
+    void reset();
 }
