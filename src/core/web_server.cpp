@@ -43,7 +43,7 @@ void handleCSS() {
 void handleDuckyScript() {
     if (server.hasArg("script")) {
         String script = server.arg("script");
-        Serial.printf("Script recieved: %s\n", script.c_str());
+        Serial.printf("Script recieved:\n%s\n", script.c_str());
         
         bool success = duckyparser::execute(script);
 
