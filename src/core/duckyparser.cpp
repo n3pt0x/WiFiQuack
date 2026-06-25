@@ -17,7 +17,7 @@ namespace duckyparser {
 
     void press(String command) {
         if (command == "ENTER") {
-            Keyboard.write(KEY_RETURN);
+            keyboard_utils::writeKey(KEY_RETURN);
         }
         else if (command == "GUI" || command == "WINDOWS") {
             keyboard_utils::pressKey(KEY_LEFT_GUI);
@@ -32,25 +32,25 @@ namespace duckyparser {
             keyboard_utils::pressKey(KEY_LEFT_ALT);
         }
         else if (command == "TAB") {
-            Keyboard.write(KEY_TAB);
+            keyboard_utils::writeKey(KEY_TAB);
         }
         else if (command == "ESC" || command == "ESCAPE") {
-            Keyboard.write(KEY_ESC);
+            keyboard_utils::writeKey(KEY_ESC);
         }
         else if (command == "BACKSPACE" || command == "DELETE") {
-            Keyboard.write(KEY_BACKSPACE);
+            keyboard_utils::writeKey(KEY_BACKSPACE);
         }
         else if (command == "UP" || command == "UPARROW") {
-            Keyboard.write(KEY_UP_ARROW);
+            keyboard_utils::writeKey(KEY_UP_ARROW);
         }
         else if (command == "DOWN" || command == "DOWNARROW") {
-            Keyboard.write(KEY_DOWN_ARROW);
+            keyboard_utils::writeKey(KEY_DOWN_ARROW);
         }
         else if (command == "LEFT" || command == "LEFTARROW") {
-            Keyboard.write(KEY_LEFT_ARROW);
+            keyboard_utils::writeKey(KEY_LEFT_ARROW);
         }
         else if (command == "RIGHT" || command == "RIGHTARROW") {
-            Keyboard.write(KEY_RIGHT_ARROW);
+            keyboard_utils::writeKey(KEY_RIGHT_ARROW);
         }
         else {
             Serial.print("Unknown command: ");
@@ -109,18 +109,26 @@ namespace duckyparser {
                 }
             }
             else if (command == "LOCALE") {
-                if (param == "FR") {
-                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_FR);
+                if (param == "DE") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_DE);
                 } else if (param == "US") {
                     keyboard_utils::setLayout(keyboard_utils::LAYOUT_US);
+                } else if (param == "ES") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_ES);
+                } else if (param == "FR") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_FR);
+                } else if (param == "IT") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_IT);
+                } else if (param == "PT") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_PT);
+                } else if (param == "SE") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_SE);
+                } else if (param == "DK") {
+                    keyboard_utils::setLayout(keyboard_utils::LAYOUT_DK);
                 } else {
                     Serial.print("Unknown locale: ");
                     Serial.println(param);
                 }
-            }
-            else {
-                Serial.print("Unknown command: ");
-                Serial.println(command);
             }
         }
 
