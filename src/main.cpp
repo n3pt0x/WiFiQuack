@@ -7,7 +7,7 @@
 
 void setup() {
   Serial.begin(SERIAL_BAUD);
-  duckyparser::begin(duckyparser::LAYOUT_FR);
+  duckyparser::begin(keyboard_utils::LAYOUT_FR);
   delay(1000);
   printBanner();
 
