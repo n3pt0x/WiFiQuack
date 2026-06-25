@@ -1,4 +1,5 @@
 #include "wifi_manager.h"
+#include "config.h"
 
 bool startWiFiAP()
 {

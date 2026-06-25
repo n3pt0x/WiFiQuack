@@ -8,7 +8,7 @@
 void setup() {
   Serial.begin(SERIAL_BAUD);
   duckyparser::begin(keyboard_utils::LAYOUT_FR);
-  delay(1000);
+  delay(STARTUP_DELAY);
   printBanner();
 
   bool wifiOk = startWiFiAP();
