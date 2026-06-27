@@ -12,3 +12,8 @@ __        ___ _____ _  ___                   _
 =====================================================
     )EOD");
 }
+
+bool setError(String& errorMsg, const String& msg) {
+  errorMsg = msg;
+  return false;
+}
