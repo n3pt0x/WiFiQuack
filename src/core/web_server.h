@@ -1,5 +1,4 @@
-#ifndef WEB_SERVER_H
-#define WEB_SERVER_H
+#pragma once
 
 #include <WebServer.h>
 
@@ -13,5 +12,3 @@ void handleJS();
 void handleCSS();
 void handleDuckyScript();
 void handle404();
-
-#endif

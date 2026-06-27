@@ -1,8 +1,8 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <Arduino.h>
 
 void printBanner();
-
-#endif
+bool setError(String& errorMsg, const String& msg);
+bool returnError(String& errorMsg);
+String cleanLine(String line);
