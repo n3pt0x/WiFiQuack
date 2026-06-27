@@ -3,9 +3,10 @@
 
 namespace keyboard_utils {
     Layout currentLayout = LAYOUT_FR;
+    bool keyboardStarted = false;
 
     void setLayout(Layout layout) {
-        if (currentLayout == layout) return;
+        if (currentLayout == layout && keyboardStarted) return;
         
         currentLayout = layout;
         Keyboard.end();
@@ -37,6 +38,7 @@ namespace keyboard_utils {
             default:
                 Keyboard.begin(KeyboardLayout_fr_FR);
                 break;
+            keyboardStarted = true;
         }
     }
 
