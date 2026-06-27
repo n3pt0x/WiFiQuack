@@ -17,3 +17,10 @@ bool setError(String& errorMsg, const String& msg) {
   errorMsg = msg;
   return false;
 }
+
+String cleanLine(String line) {
+  line.replace("\r", "");
+  line.replace("\n", "");
+  line.trim();
+  return line;
+}
