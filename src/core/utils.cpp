@@ -18,6 +18,11 @@ bool setError(String& errorMsg, const String& msg) {
   return false;
 }
 
+bool returnError(String& errorMsg) {
+  Serial.println(errorMsg);
+  return false;
+}
+
 String cleanLine(String line) {
   line.replace("\r", "");
   line.replace("\n", "");

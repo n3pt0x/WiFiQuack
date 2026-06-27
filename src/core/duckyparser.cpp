@@ -201,8 +201,7 @@ namespace duckyparser {
     bool execute(const String& script, String& errorMsg) {
         if (script.length() == 0) {
             setError(errorMsg, "Empty script");
-            Serial.println(errorMsg);
-            return false;
+            return returnError(errorMsg);
         }
 
         int start = 0;
@@ -214,8 +213,7 @@ namespace duckyparser {
 
             if (line != "") {
                 if (!parser(line, errorMsg)) {
-                    Serial.println(errorMsg);
-                    return false;
+                    return returnError(errorMsg);
                 }
             }
 
@@ -226,8 +224,7 @@ namespace duckyparser {
         String lastLine = cleanLine(script.substring(start));
         if (lastLine != "") {
             if (!parser(lastLine, errorMsg)) {
-                Serial.println(errorMsg);
-                return false;
+                return returnError(errorMsg);
             }
         }
 
