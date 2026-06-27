@@ -15,7 +15,7 @@ namespace duckyparser {
         lastLine = "";
     }
 
-    void press(String command) {
+    bool press(String command, String& errorMsg) {
         // Modifiers
         if      (command == "GUI" || command == "WINDOWS")      keyboard_utils::writeKey(KEY_LEFT_GUI);
         else if (command == "CTRL" || command == "CONTROL")     keyboard_utils::writeKey(KEY_LEFT_CTRL);
@@ -79,47 +79,70 @@ namespace duckyparser {
         else if (command == "POWER")                            keyboard_utils::writeKey(KEY_POWER);
         else if (command == "RESET")                            keyboard_utils::writeKey(KEY_RESET);
         else if (command == "SLEEP")                            keyboard_utils::writeKey(KEY_SLEEP);
-
         else {
-            Serial.print("Unknown command: ");
-            Serial.println(command);
+            return setError(errorMsg, "Unknown command: " + command);
         }
+        
+        return true;
     }
 
-    void parser(String line) {
+    bool parser(String line, String& errorMsg) {
         int firstSpace = line.indexOf(' ');
 
         if (firstSpace == -1) {
-            press(line);
+            if (!press(line, errorMsg)) {
+                return false;
+            }
         } else {
-            String command = line.substring(0, firstSpace);
-            String param = line.substring(firstSpace + 1);
-            param.trim();
+            String command = cleanLine(line.substring(0, firstSpace));
+            String param = cleanLine(line.substring(firstSpace + 1));
+
+            if (param.length() == 0) {
+                return setError(errorMsg, "Empty parameter in command: " + command);
+            }
 
             if (command == "REM" || command == "#"){} // do nothing
             else if (command == "STRING") keyboard_utils::sendString(param);
             else if (command == "DELAY") {
                 int delayTime = param.toInt();
+                if (delayTime < 0) {
+                    return setError(errorMsg, "Invalid parameter for the " + command + " : " + param + ". " + command + " expects an integer parameter");
+                }
+
                 if (delayTime > 0) delay(delayTime);
             }
             else if (command == "DEFAULTDELAY" || command == "DEFAULT_DELAY") {
                 defaultDelay = param.toInt();
+                if (defaultDelay < 0) {
+                    return setError(errorMsg, "Invalid parameter for the " + command + " : " + param + ". " + command + " expects an integer parameter");
+                }
+
                 if (defaultDelay < 0) defaultDelay = 0;
             }
             else if (command == "REPEAT" || command == "REPLAY") {
                 int replay = param.toInt();
+                if (replay < 0) {
+                    return setError(errorMsg, "Invalid parameter for the " + command + " : " + param + ". " + command + " expects an integer parameter");
+                }
+
                 for (int i = 0; i < replay; i++) {
-                    parser(lastLine);
+                    if (!parser(lastLine, errorMsg)) {
+                        return false;
+                    }
                 }
             }
             else if (command == "GUI" || command == "WINDOWS") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_GUI, param[0]);
+                } else {
+                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
                 }
             }
             else if (command == "CTRL" || command == "CONTROL") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_CTRL, param[0]);
+                } else {
+                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
                 }
             }
             else if (command == "KEYCODE") {
@@ -135,17 +158,21 @@ namespace duckyparser {
                     Keyboard.write(modifier);
                     Keyboard.write(key);
                 } else {
-                    Serial.println("KEYCODE: missing parameters");
+                    return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
                 }
             }
             else if (command == "SHIFT") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_SHIFT, param[0]);
+                } else {
+                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
                 }
             }
             else if (command == "ALT") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_ALT, param[0]);
+                } else {
+                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
                 }
             }
             else if (command == "LOCALE") {
@@ -158,18 +185,23 @@ namespace duckyparser {
                 else if (param == "SE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_SE);
                 else if (param == "DK") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DK);
                 else {
-                    Serial.print("Unknown locale: ");
-                    Serial.println(param);
+                    return setError(errorMsg, "Unknown keyboard locale: " + param + ", choose between (DE, US, ES, FR, IT, PT, SE, DK)");
                 }
+            }
+            else {
+                return setError(errorMsg, "Unknown command: " + command);
             }
         }
 
         if (defaultDelay > 0) delay(defaultDelay);
+
+        return true;
     }
 
-    bool execute(const String& script) {
+    bool execute(const String& script, String& errorMsg) {
         if (script.length() == 0) {
-            Serial.println("execute: empty script");
+            setError(errorMsg, "Empty script");
+            Serial.println(errorMsg);
             return false;
         }
 
@@ -177,22 +209,26 @@ namespace duckyparser {
         int end = script.indexOf('\n');
 
         while (end != -1) {
-            String line = script.substring(start, end);
-            line.trim();
+            String line = cleanLine(script.substring(start, end));
             lastLine = line;
 
             if (line != "") {
-                parser(line);
+                if (!parser(line, errorMsg)) {
+                    Serial.println(errorMsg);
+                    return false;
+                }
             }
 
             start = end + 1;
             end = script.indexOf('\n', start);
         }
 
-        String lastLine = script.substring(start);
-        lastLine.trim();
+        String lastLine = cleanLine(script.substring(start));
         if (lastLine != "") {
-            parser(lastLine);
+            if (!parser(lastLine, errorMsg)) {
+                Serial.println(errorMsg);
+                return false;
+            }
         }
 
         return true;
