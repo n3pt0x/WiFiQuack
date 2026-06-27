@@ -42,15 +42,14 @@ void handleCSS() {
 
 void handleDuckyScript() {
     if (server.hasArg("script")) {
+        String errorMsg;
         String script = server.arg("script");
         Serial.printf("Script recieved:\n%s\n", script.c_str());
         
-        bool success = duckyparser::execute(script);
-
-        if (success) {
+        if (duckyparser::execute(script, errorMsg)) {
             server.send(200, "text/html", "Script executed successfully.");
         } else {
-            server.send(400, "text/html", "Error: Invalid script.");
+            server.send(400, "text/html", "[Error] " + errorMsg);
         }
 
     } else {
