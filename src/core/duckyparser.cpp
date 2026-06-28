@@ -88,6 +88,7 @@ namespace duckyparser {
 
     bool parser(String line, String& errorMsg) {
         int firstSpace = line.indexOf(' ');
+        bool isDelay = false;
 
         if (firstSpace == -1) {
             if (!press(line, errorMsg)) {
@@ -110,6 +111,7 @@ namespace duckyparser {
                 }
 
                 if (delayTime > 0) delay(delayTime);
+                isDelay = true;
             }
             else if (command == "DEFAULTDELAY" || command == "DEFAULT_DELAY") {
                 defaultDelay = param.toInt();
@@ -193,7 +195,7 @@ namespace duckyparser {
             }
         }
 
-        if (defaultDelay > 0) delay(defaultDelay);
+        if (!isDelay && defaultDelay > 0) delay(defaultDelay);
 
         return true;
     }
