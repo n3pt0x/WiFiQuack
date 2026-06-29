@@ -13,4 +13,4 @@ const long SERIAL_BAUD = 115200;
 static const char* WIFI_SSID = "WiFiQuack";
 static const char* WIFI_PASSPHRASE = "WiFiQuack";
 
-#define DEFAULT_LAYOUT keyboard_utils::LAYOUT_FR
+#define DEFAULT_KEYBOARD_LAYOUT keyboard_utils::LAYOUT_FR
