@@ -103,6 +103,56 @@ button:active {
     color: #f85149;
 }
 
+/* ==== CONFIG PAGE === */
+
+input,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #f0883e;
+    box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
+}
+
+label {
+    display: block;
+    margin-top: 1.2rem;
+    margin-bottom: 0.2rem;
+    font-weight: 500;
+    color: #f0f6fc;
+}
+
+label:first-of-type {
+    margin-top: 0;
+}
+
+button[type="submit"] {
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#status {
+    text-align: center;
+    margin-top: 1rem;
+}
+
 /* ===== 404 PAGE ===== */
 .error-container {
     display: flex;

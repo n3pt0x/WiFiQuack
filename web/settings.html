@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFiQuack - Settings</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/settings.css">
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span class="duck-icon">🐤</span>
+            WiFiQuack
+        </h1>
+        <p class="subtitle">Modify your device settings</p>
+
+        <form id="settingsForm">
+            <label for="ssid">WiFi SSID</label>
+            <input type="text" id="ssid" placeholder="Network name" required>
+
+            <label for="passphrase">WiFi Passphrase</label>
+            <input type="text" id="passphrase" placeholder="Network password" required>
+
+            <label for="keyboardLayout">Keyboard Layout</label>
+            <select id="keyboardLayout">
+                <option value="DE">DE</option>
+                <option value="US">US</option>
+                <option value="ES">ES</option>
+                <option value="FR" selected>FR</option>
+                <option value="IT">IT</option>
+                <option value="PT">PT</option>
+                <option value="SE">SE</option>
+                <option value="DK">DK</option>
+            </select>
+
+            <button type="submit">Save Settings</button>
+        </form>
+
+        <div id="status"></div>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>
