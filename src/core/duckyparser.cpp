@@ -1,14 +1,13 @@
+#include <Arduino.h>
+#include <Keyboard.h>
+#include <HID_Keyboard.h>
 #include "duckyparser.h"
+#include "utils.h"
 
 namespace duckyparser {
 
     int defaultDelay = 0;
     String lastLine = "";
-
-    void begin(keyboard_utils::Layout initialLayout) {
-        keyboard_utils::setLayout(initialLayout);
-        reset();
-    }
 
     void reset() {
         defaultDelay = 0;

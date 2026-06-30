@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
-#include <Keyboard.h>
-#include <HID_Keyboard.h>
-
 namespace keyboard_utils {
 
     enum Layout : uint8_t {
@@ -17,6 +13,7 @@ namespace keyboard_utils {
         LAYOUT_DK
     };
 
+    void begin();
     void setLayout(Layout layout);
     void pressKey(uint8_t key);
     void pressCombination(uint8_t modifier, uint8_t key);
