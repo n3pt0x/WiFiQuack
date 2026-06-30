@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "core/utils.h"
 
 void printBanner() {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "keyboard_utils.h"
-
 const long SERIAL_BAUD = 115200;
 
 #ifdef DEBUG
@@ -9,8 +7,3 @@ const long SERIAL_BAUD = 115200;
 #else
     #define STARTUP_DELAY 1000
 #endif
-
-static const char* WIFI_SSID = "WiFiQuack";
-static const char* WIFI_PASSPHRASE = "WiFiQuack";
-
-#define DEFAULT_KEYBOARD_LAYOUT keyboard_utils::LAYOUT_FR
