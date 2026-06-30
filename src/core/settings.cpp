@@ -21,15 +21,9 @@ namespace settings {
                 return false;
             }
 
-            const char* DEFAULT_CONFIG = R"EOD(
-            {
-                "wifi_ssid": "WiFiQuack",
-                "wifi_passphrase": "WiFiQuack",
-                "keyboard_layout": "FR"
-            }
-            )EOD";
+            String defaultConfig = getSettingsJson();
 
-            size_t written = configFile.write(DEFAULT_CONFIG);
+            size_t written = configFile.write(defaultConfig);
             configFile.close();
 
             if (written == 0) {
@@ -66,9 +60,9 @@ namespace settings {
             return;
         }
 
-        wifi_ssid = doc["wifi_ssid"] | "WiFiQuack";
-        wifi_passphrase = doc["wifi_passphrase"] | "WiFiQuack";
-        String layout_str = doc["keyboard_layout"] | "FR";
+        wifi_ssid = doc["wifi_ssid"] | wifi_ssid;
+        wifi_passphrase = doc["wifi_passphrase"] | wifi_passphrase;
+        String layout_str = doc["keyboard_layout"] | DEFAULT_LAYOUT_STR;
         keyboard_layout = stringToLayout(layout_str);
     }
 
@@ -76,17 +70,29 @@ namespace settings {
         fs::File f = LittleFS.open(FILENAME, "w");
         if (!f) return;
 
-        String layoutStr;
-        switch (keyboard_layout) {
-            case keyboard_utils::LAYOUT_DE: layoutStr = "DE"; break;
-            case keyboard_utils::LAYOUT_US: layoutStr = "US"; break;
-            case keyboard_utils::LAYOUT_ES: layoutStr = "ES"; break;
-            case keyboard_utils::LAYOUT_FR: layoutStr = "FR"; break;
-            case keyboard_utils::LAYOUT_IT: layoutStr = "IT"; break;
-            case keyboard_utils::LAYOUT_PT: layoutStr = "PT"; break;
-            case keyboard_utils::LAYOUT_SE: layoutStr = "SE"; break;
-            case keyboard_utils::LAYOUT_DK: layoutStr = "DK"; break;
-            default: layoutStr = "FR"; break;
+        String layoutStr = layoutToString(keyboard_layout);
+    }
+
+    String getSettingsJson() {
+        String json = "{";
+        json += "\"wifi_ssid\":" + wifi_ssid + "\"\", ";
+        json += "\"wifi_passphrase\":" + wifi_passphrase + "\"\", ";
+        json += "\"keyboard_layout\":" + layoutToString(keyboard_layout) + "\"\", ";
+        json += "}";
+        return json;
+    }
+
+    String layoutToString(keyboard_utils::Layout layout) {
+        switch (layout) {
+            case keyboard_utils::LAYOUT_DE: return "DE";
+            case keyboard_utils::LAYOUT_US: return "US";
+            case keyboard_utils::LAYOUT_ES: return "ES";
+            case keyboard_utils::LAYOUT_FR: return "FR";
+            case keyboard_utils::LAYOUT_IT: return "IT";
+            case keyboard_utils::LAYOUT_PT: return "PT";
+            case keyboard_utils::LAYOUT_SE: return "SE";
+            case keyboard_utils::LAYOUT_DK: return "DK";
+            default: return DEFAULT_LAYOUT_STR;
         }
     }
 
