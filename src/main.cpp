@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <LittleFS.h>
 #include "core/config.h"
 #include "core/settings.h"
 #include "core/utils.h"
@@ -13,16 +14,16 @@ void setup() {
   delay(STARTUP_DELAY);
 
   printBanner();
+  settings::flushLog();
   
-  bool wifiOk = startWiFiAP();
-  if (!wifiOk) {
-        Serial.println("Creating AP failed !");
-        while (true) {
-          delay(100);
-        }
+  if (!startWiFiAP()) {
+    Serial.println("Creating AP failed !");
+    while (true) {
+      delay(100);
+    }
   } else {
-        Serial.println("AP successfully created !");
-        printWiFiInfos();
+      Serial.println("AP successfully created !");
+      printWiFiInfos();
   }
   initWebServer();
   Serial.flush();
