@@ -87,6 +87,36 @@ button:active {
     transform: scale(0.97);
 }
 
+/* ===== BOUTON GROUP ===== */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.button-group button {
+    flex: 1;
+    margin: 0;
+    text-align: center;
+}
+
+.button-group button[type="submit"] {
+    flex: 1;
+    width: 100%;
+    margin: 0;
+}
+
+.button-group .btn-link {
+    flex: 1;
+    display: block;
+    text-decoration: none;
+}
+
+.button-group .btn-link button {
+    width: 100%;
+    margin: 0;
+}
+
 /* ===== STATUS ===== */
 #status {
     margin-top: 14px;
@@ -211,5 +241,13 @@ button[type="submit"]:disabled {
     button {
         width: 100%;
         text-align: center;
+    }
+
+    .button-group {
+        flex-wrap: wrap;
+    }
+
+    .button-group button {
+        flex: 1 1 100%;
     }
 }

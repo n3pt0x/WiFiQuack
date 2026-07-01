@@ -19,6 +19,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    document.getElementById('rebootButton').addEventListener('click', async function() {
+        const button = this;
+
+        status.textContent = 'Rebooting...';
+        status.className = '';
+        button.disabled = true;
+
+        try {
+            const response = await fetch('/reboot', { method: 'POST' });
+            
+            if (response.ok) {
+                status.textContent = 'Reboot command sent. Device will restart.';
+                status.className = 'success';
+            } else {
+                const error = await response.text();
+                status.textContent = 'Error: ' + error;
+                status.className = 'error';
+                button.disabled = false;
+            }
+        } catch (error) {
+            status.textContent = 'Reboot command sent (device may restart).';
+            status.className = 'success';
+        }
+    });
+
     document.getElementById('settingsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -45,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.text();
 
             if (response.ok) {
-                status.textContent = 'Settings saved successfully';
+                status.textContent = 'Settings saved. Reboot the device to apply changes.';
                 status.className = 'success';
             } else {
                 status.textContent = 'Error: ' + result;
@@ -55,6 +80,37 @@ document.addEventListener('DOMContentLoaded', function() {
             status.textContent = 'Error: ' + error.message;
             status.className = 'error';
         } finally {
+            button.disabled = false;
+        }
+    });
+
+    document.getElementById('resetButton').addEventListener('click', async function() {
+        const status = document.getElementById('status');
+        const button = this;
+
+        if (!confirm('Reset all settings to default and reboot?')) {
+            return;
+        }
+
+        status.textContent = 'Resetting settings...';
+        status.className = '';
+        button.disabled = true;
+
+        try {
+            const response = await fetch('/reset', { method: 'POST' });
+            
+            if (response.ok) {
+                status.textContent = 'Settings reset. Device will restart.';
+                status.className = 'success';
+            } else {
+                const error = await response.text();
+                status.textContent = 'Error: ' + error;
+                status.className = 'error';
+                button.disabled = false;
+            }
+        } catch (error) {
+            status.textContent = 'Error: ' + error.message;
+            status.className = 'error';
             button.disabled = false;
         }
     });
