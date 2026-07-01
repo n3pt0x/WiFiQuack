@@ -25,6 +25,12 @@ WiFiQuack turns your compatible board into a BadUSB device with a web interface.
 
 > **Note**: The board must support USB HID (keyboard emulation) and have WiFi.
 
+### 🔌 Compatible USB Dongles (ESP32-S2/S3)
+
+- [LILYGO T-Dongle-S3](https://wiki.lilygo.cc/products/t-dongle-series/t-dongle-s3/)
+- [AtomS3U ESP32S3 (USB-A)](https://shop.m5stack.com/products/atoms3u?variant=43911717945601)
+- [ESP32-S2 USB-A (aliexpress)](https://fr.aliexpress.com/item/1005008859522143.html)
+
 ---
 
 ## ⚙️ Installation & Compilation
@@ -56,8 +62,6 @@ pio device monitor -e <PIO_ENV>
 - `esp32s2` – ESP32-S2
 - `esp32s3` – ESP32-S3
 - `rp2040_debug`, `rp2350_debug`, etc. – Debug builds with verbose logs
-
-> **Note**: Most boards do not require pressing BOOTSEL manually. PlatformIO handles the upload automatically.
 
 ---
 
@@ -92,24 +96,6 @@ After saving, **reboot** the device for changes to take effect.
 ### 5. Reset to default
 
 Use the **Reset Settings** button in the settings page to restore factory defaults.
-
----
-
-## 🗂️ Configuration
-
-Settings are stored in a `config.json` file on the device's LittleFS partition.
-
-Default values:
-
-```json
-{
-  "wifi_ssid": "WiFiQuack",
-  "wifi_passphrase": "WiFiQuack",
-  "keyboard_layout": "FR"
-}
-```
-
-You can also edit the file manually if you mount the LittleFS partition.
 
 ---
 
