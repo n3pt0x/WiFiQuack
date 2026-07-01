@@ -16,3 +16,4 @@ void handle404();
 void handleDuckyScript();
 void getSettings();
 void postSettings();
+void reboot();
