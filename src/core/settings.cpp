@@ -8,6 +8,7 @@ namespace settings {
     keyboard_utils::Layout keyboard_layout = keyboard_utils::LAYOUT_FR;
     const char* FILENAME = "/config.json";
     const char* DEFAULT_LAYOUT_STR = "FR";
+    String logBuffer;
 
     String getSettingsJson() {
         String json = "{";
@@ -22,8 +23,8 @@ namespace settings {
         JsonDocument doc;
         DeserializationError error = deserializeJson(doc, json);
         if (error) {
-            Serial.print("JSON parse error: ");
-            Serial.println(error.c_str());
+            logToBuffer("JSON parse error: ");
+            logToBuffer(error.c_str());
             return false;
         }
 
@@ -36,14 +37,14 @@ namespace settings {
 
     bool begin() {
         if (!LittleFS.begin()) {
-            Serial.println("LittleFS mount failed.");
+            logToBuffer("LittleFS mount failed.");
             return false;
         }
 
         if (!LittleFS.exists(FILENAME)) {
             fs::File configFile = LittleFS.open(FILENAME, "w");
             if (!configFile) {
-                Serial.println("Failed to create config file.");
+                logToBuffer("Failed to create config file.");
                 return false;
             }
 
@@ -52,7 +53,7 @@ namespace settings {
             configFile.close();
 
             if (written == 0) {
-                Serial.println("Failed to write default config.");
+                logToBuffer("Failed to write default config.");
                 return false;
             }
         }
@@ -64,7 +65,7 @@ namespace settings {
     void load() {
         fs::File configFile = LittleFS.open(FILENAME, "r");
         if (!configFile) {
-            Serial.println("Failed to open config file for reading.");
+            logToBuffer("Failed to open config file for reading.");
             return;
         }
 
@@ -72,7 +73,7 @@ namespace settings {
         configFile.close();
 
         if (str.length() == 0) {
-            Serial.println("Config file is empty.");
+            logToBuffer("Config file is empty.");
             return;
         }
 
@@ -82,6 +83,7 @@ namespace settings {
     void save() {
         fs::File f = LittleFS.open(FILENAME, "w");
         if (!f) return;
+        logToBuffer("Settings saved.");
         f.print(getSettingsJson());
         f.close();
     }
@@ -110,5 +112,18 @@ namespace settings {
         else if (layout_str == "SE") return keyboard_utils::LAYOUT_SE;
         else if (layout_str == "DK") return keyboard_utils::LAYOUT_DK;
         else                         return keyboard_utils::LAYOUT_FR;
+    }
+    
+    void logToBuffer(const char* log) {
+        logBuffer += "[LOG] ";
+        logBuffer += log;
+        logBuffer += "\n";
+    }
+
+    void flushLog() {
+        if (logBuffer.length() > 0) {
+            Serial.print(logBuffer);
+            logBuffer = "";
+        }
     }
 }
