@@ -1,12 +1,38 @@
 #include <LittleFS.h>
-#include "settings.h"
 #include <ArduinoJson.h>
+#include "settings.h"
 
 namespace settings {
     String wifi_ssid = "WiFiQuack";
     String wifi_passphrase = "WiFiQuack";
     keyboard_utils::Layout keyboard_layout = keyboard_utils::LAYOUT_FR;
-    const char* FILENAME = "config.json";
+    const char* FILENAME = "/config.json";
+    const char* DEFAULT_LAYOUT_STR = "FR";
+
+    String getSettingsJson() {
+        String json = "{";
+        json += "\"wifi_ssid\":\"" + wifi_ssid + "\",";
+        json += "\"wifi_passphrase\":\"" + wifi_passphrase + "\",";
+        json += "\"keyboard_layout\":\"" + layoutToString(keyboard_layout) + "\"";
+        json += "}";
+        return json;
+    }
+
+    bool setSettingsFromJson(const String& json) {
+        JsonDocument doc;
+        DeserializationError error = deserializeJson(doc, json);
+        if (error) {
+            Serial.print("JSON parse error: ");
+            Serial.println(error.c_str());
+            return false;
+        }
+
+        wifi_ssid = doc["wifi_ssid"] | wifi_ssid;
+        wifi_passphrase = doc["wifi_passphrase"] | wifi_passphrase;
+        String layout_str = doc["keyboard_layout"] | "FR";
+        keyboard_layout = stringToLayout(layout_str);
+        return true;
+    }
 
     bool begin() {
         if (!LittleFS.begin()) {
@@ -22,8 +48,7 @@ namespace settings {
             }
 
             String defaultConfig = getSettingsJson();
-
-            size_t written = configFile.write(defaultConfig);
+            size_t written = configFile.print(defaultConfig);
             configFile.close();
 
             if (written == 0) {
@@ -33,7 +58,6 @@ namespace settings {
         }
 
         load();
-
         return true;
     }
 
@@ -52,34 +76,14 @@ namespace settings {
             return;
         }
 
-        JsonDocument doc;
-        DeserializationError error = deserializeJson(doc, str);
-        if (error) {
-            Serial.print("JSON parse error: ");
-            Serial.println(error.c_str());
-            return;
-        }
-
-        wifi_ssid = doc["wifi_ssid"] | wifi_ssid;
-        wifi_passphrase = doc["wifi_passphrase"] | wifi_passphrase;
-        String layout_str = doc["keyboard_layout"] | DEFAULT_LAYOUT_STR;
-        keyboard_layout = stringToLayout(layout_str);
+        setSettingsFromJson(str);
     }
 
     void save() {
         fs::File f = LittleFS.open(FILENAME, "w");
         if (!f) return;
-
-        String layoutStr = layoutToString(keyboard_layout);
-    }
-
-    String getSettingsJson() {
-        String json = "{";
-        json += "\"wifi_ssid\":" + wifi_ssid + "\"\", ";
-        json += "\"wifi_passphrase\":" + wifi_passphrase + "\"\", ";
-        json += "\"keyboard_layout\":" + layoutToString(keyboard_layout) + "\"\", ";
-        json += "}";
-        return json;
+        f.print(getSettingsJson());
+        f.close();
     }
 
     String layoutToString(keyboard_utils::Layout layout) {
