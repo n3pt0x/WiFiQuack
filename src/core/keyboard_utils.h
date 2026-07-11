@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 namespace keyboard_utils {
 
     enum Layout : uint8_t {
