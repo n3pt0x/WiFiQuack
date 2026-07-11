@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <Keyboard.h>
-#include <HID_Keyboard.h>
+#include "keyboard_def.h"
+#include "keyboard_utils.h"
 #include "duckyparser.h"
 #include "utils.h"
 
@@ -156,8 +156,8 @@ namespace duckyparser {
                     uint8_t modifier = (uint8_t)strtol(modifierStr.c_str(), NULL, 0);
                     uint8_t key = (uint8_t)strtol(keyStr.c_str(), NULL, 0);
 
-                    Keyboard.write(modifier);
-                    Keyboard.write(key);
+                    keyboard_utils::writeKey(modifier);
+                    keyboard_utils::writeKey(key);
                 } else {
                     return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
                 }
