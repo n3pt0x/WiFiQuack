@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 #include <HID_Keyboard.h>
-#include "settings.h"
 #include "keyboard_utils.h"
+#include "settings.h"
 #include "duckyparser.h"
 
 namespace keyboard_utils {
@@ -28,8 +28,6 @@ namespace keyboard_utils {
         }
         currentLayout = settings::keyboard_layout;
         initialized = true;
-
-        // reset global var
         duckyparser::reset();
     }
 
