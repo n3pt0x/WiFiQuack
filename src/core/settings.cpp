@@ -9,6 +9,7 @@ namespace settings {
     const char* FILENAME = "/config.json";
     const char* DEFAULT_LAYOUT_STR = "FR";
     String logBuffer;
+    bool fsInitialized = false;
 
     String getSettingsJson() {
         String json = "{";
@@ -37,23 +38,24 @@ namespace settings {
 
     bool begin() {
         if (!LittleFS.begin()) {
-            logToBuffer("LittleFS mount failed.");
-            return false;
-        }
-
-        if (!LittleFS.exists(FILENAME)) {
-            fs::File configFile = LittleFS.open(FILENAME, "w");
-            if (!configFile) {
-                logToBuffer("Failed to create config file.");
+            logToBuffer("LittleFS mount failed. Attempting to format...");
+            
+            // create partition if not defined
+            if (!LittleFS.begin(true)) {
+                logToBuffer("LittleFS format failed. Using RAM only.");
+                fsInitialized = false;
                 return false;
             }
+            logToBuffer("LittleFS formatted successfully.");
+        }
+        
+        fsInitialized = true;
+        logToBuffer("LittleFS mounted successfully.");
 
-            String defaultConfig = getSettingsJson();
-            size_t written = configFile.print(defaultConfig);
-            configFile.close();
-
-            if (written == 0) {
-                logToBuffer("Failed to write default config.");
+        if (!LittleFS.exists(FILENAME)) {
+            logToBuffer("Config file not found. Creating default config...");
+            if (!createDefaultConfig()) {
+                logToBuffer("Failed to create default config.");
                 return false;
             }
         }
@@ -62,7 +64,39 @@ namespace settings {
         return true;
     }
 
+    bool createDefaultConfig() {
+        fs::File configFile = LittleFS.open(FILENAME, "w");
+        if (!configFile) {
+            logToBuffer("Failed to create config file.");
+            return false;
+        }
+
+        String defaultConfig = getSettingsJson();
+        size_t written = configFile.print(defaultConfig);
+        configFile.flush();
+        configFile.close();
+
+        if (written == 0) {
+            logToBuffer("Failed to write default config.");
+            return false;
+        }
+
+        logToBuffer("Default config created: ");
+        logToBuffer(defaultConfig);
+        return true;
+    }
+
     void load() {
+        if (!fsInitialized) {
+            logToBuffer("LittleFS not initialized, cannot load.");
+            return;
+        }
+
+        if (!LittleFS.exists(FILENAME)) {
+            logToBuffer("Config file does not exist.");
+            return;
+        }
+
         fs::File configFile = LittleFS.open(FILENAME, "r");
         if (!configFile) {
             logToBuffer("Failed to open config file for reading.");
@@ -77,15 +111,61 @@ namespace settings {
             return;
         }
 
+        logToBuffer("Loading config: ");
+        logToBuffer(str);
         setSettingsFromJson(str);
     }
 
     void save() {
+        if (!fsInitialized) {
+            logToBuffer("LittleFS not initialized, cannot save.");
+            return;
+        }
+
         fs::File f = LittleFS.open(FILENAME, "w");
-        if (!f) return;
-        logToBuffer("Settings saved.");
-        f.print(getSettingsJson());
+        if (!f) {
+            logToBuffer("Failed to open config file for writing.");
+            return;
+        }
+
+        String json = getSettingsJson();
+        size_t written = f.print(json);
+        f.flush();
         f.close();
+
+        if (written > 0) {
+            logToBuffer("Settings saved: ");
+            logToBuffer(json);
+            verifySave(json);
+        } else {
+            logToBuffer("Failed to write settings.");
+        }
+    }
+
+    void verifySave(const String& expectedJson) {
+        if (!LittleFS.exists(FILENAME)) {
+            logToBuffer("VERIFY ERROR: File not found after save!");
+            return;
+        }
+
+        fs::File f = LittleFS.open(FILENAME, "r");
+        if (!f) {
+            logToBuffer("VERIFY ERROR: Cannot open file for verification!");
+            return;
+        }
+
+        String content = f.readString();
+        f.close();
+
+        if (content == expectedJson) {
+            logToBuffer("VERIFY OK: File content matches.");
+        } else {
+            logToBuffer("VERIFY FAILED!");
+            logToBuffer("Expected: ");
+            logToBuffer(expectedJson);
+            logToBuffer("Got: ");
+            logToBuffer(content);
+        }
     }
 
     String layoutToString(keyboard_utils::Layout layout) {
@@ -115,6 +195,13 @@ namespace settings {
     }
     
     void logToBuffer(const char* log) {
+        if (log == nullptr) return;
+        logBuffer += "[LOG] ";
+        logBuffer += log;
+        logBuffer += "\n";
+    }
+
+    void logToBuffer(const String& log) {
         logBuffer += "[LOG] ";
         logBuffer += log;
         logBuffer += "\n";
