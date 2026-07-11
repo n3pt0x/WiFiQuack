@@ -6,8 +6,8 @@
 #include "duckyparser.h"
 
 namespace keyboard_utils {
-    Layout currentLayout = settings::keyboard_layout;
-    bool initialized = false;
+    static Layout currentLayout = settings::keyboard_layout;
+    static bool initialized = false;
 
     void begin() {
         Layout layout = settings::keyboard_layout;
@@ -54,5 +54,17 @@ namespace keyboard_utils {
 
     void sendString(const String& str) {
         Keyboard.print(str);
+    }
+
+    void pressPower() {
+        Keyboard.write(KEY_POWER);
+    }
+
+    void pressReset() {
+        Keyboard.write(KEY_RESET);
+    }
+    
+    void pressSleep() {
+        Keyboard.write(KEY_SLEEP);
     }
 }

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <USB.h>
 #include <USBHIDKeyboard.h>
+#include <USBHIDConsumerControl.h>
 #include "keyboard_utils.h"
 #include "settings.h"
 #include "duckyparser.h"
@@ -9,7 +10,7 @@ namespace keyboard_utils {
     static Layout currentLayout = settings::keyboard_layout;
     static bool initialized = false;
     static USBHIDKeyboard Keyboard;
-
+    static USBHIDConsumerControl ConsumerControl;
     
     static const uint8_t* getKeyboardLayout(Layout layout) {
         switch (layout) {
@@ -60,5 +61,23 @@ namespace keyboard_utils {
 
     void sendString(const String& str) {
         Keyboard.print(str);
+    }
+
+    void pressPower() {
+        ConsumerControl.press(CONSUMER_CONTROL_POWER);
+        delay(50);
+        ConsumerControl.release();
+    }
+
+    void pressReset() {
+        ConsumerControl.press(CONSUMER_CONTROL_RESET);
+        delay(50);
+        ConsumerControl.release();
+    }
+
+    void pressSleep() {
+        ConsumerControl.press(CONSUMER_CONTROL_SLEEP);
+        delay(50);
+        ConsumerControl.release();
     }
 }

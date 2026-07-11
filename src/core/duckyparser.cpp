@@ -75,9 +75,9 @@ namespace duckyparser {
         else if (command == "NUM_DOT")                          keyboard_utils::writeKey(KEY_KP_DOT);
 
         // Power Control
-        else if (command == "POWER")                            keyboard_utils::writeKey(KEY_POWER);
-        else if (command == "RESET")                            keyboard_utils::writeKey(KEY_RESET);
-        else if (command == "SLEEP")                            keyboard_utils::writeKey(KEY_SLEEP);
+        else if (command == "POWER")                            keyboard_utils::pressPower();
+        else if (command == "RESET")                            keyboard_utils::pressReset();
+        else if (command == "SLEEP")                            keyboard_utils::pressSleep();
         else {
             return setError(errorMsg, "Unknown command: " + command);
         }

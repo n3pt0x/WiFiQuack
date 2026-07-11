@@ -21,4 +21,7 @@ namespace keyboard_utils {
     void pressCombination(uint8_t modifier, uint8_t key);
     void writeKey(const uint8_t key);
     void sendString(const String& str);
+    void pressPower();
+    void pressReset();
+    void pressSleep();
 };
