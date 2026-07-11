@@ -108,6 +108,11 @@ void postSettings() {
 void reboot() {
     server.send(200, "text/plain", "Rebooting...");
     delay(100);
-    watchdog_reboot(0, 0, 0);
+    #ifdef PLATFORM_ESP32
+        #include <Esp.h>
+        ESP.restart();
+    #elif defined(PLATFORM_PICO)
+        watchdog_reboot(0, 0, 0);
+    #endif
     while (1);
 }
