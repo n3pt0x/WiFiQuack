@@ -1,19 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
-  document
-    .getElementById("duckyForm")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
-      run();
-    });
-
-  document.getElementById("download").addEventListener("click", function () {
-    download();
-  });
-
-  document.getElementById("upload").addEventListener("click", function () {
-    upload();
-  });
+document.getElementById("duckyForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  run();
 });
+
+document.getElementById("download").addEventListener("click", function () {
+  download();
+});
+
+document.getElementById("upload").addEventListener("click", function () {
+  upload();
+});
+
+export async function run() {
+  const runBtn = document.getElementById("runBtn");
+  const payload = document.getElementById("payload").value;
+  const status = document.getElementById("status");
+
+  if (payload != "") {
+    status.textContent = "Payload sending ...";
+
+    try {
+      runBtn.disabled = true;
+      const response = await fetch("/run", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "script=" + encodeURIComponent(payload),
+      });
+      const result = await response.text();
+      status.textContent = `${result}`;
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+    } finally {
+      runBtn.disabled = false;
+    }
+  } else {
+    status.textContent = "Error: Cannot send an empty payload";
+  }
+}
 
 export function download() {
   const payload = document.getElementById("payload").value;
@@ -36,28 +61,7 @@ export function download() {
       status.textContent = "File downloaded correctly";
     }
   } else {
-    status.textContent = "Cannot download an empty file";
-  }
-}
-
-export async function run() {
-  const payload = document.getElementById("payload").value;
-  const status = document.getElementById("status");
-
-  status.textContent = "Payload sending ...";
-
-  try {
-    const response = await fetch("/run", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "script=" + encodeURIComponent(payload),
-    });
-    const result = await response.text();
-    status.textContent = `${result}`;
-  } catch (error) {
-    status.textContent = `Error: ${error.message}`;
+    status.textContent = "Error: Cannot download an empty file";
   }
 }
 
@@ -98,7 +102,6 @@ function upload() {
     };
     reader.readAsText(file);
     fileInput.value = "";
-    fileInput.remove();
   });
 
   fileInput.addEventListener("cancel", function () {
