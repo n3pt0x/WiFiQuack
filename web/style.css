@@ -76,7 +76,7 @@ textarea:focus {
 
 .editor-btn {
     position: absolute;
-    top: 10px;
+    top: 0px;
     background: rgba(255, 255, 255, 0.06);
     border: none;
     color: #8b949e;
