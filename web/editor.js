@@ -25,7 +25,15 @@ function handleShortCut(event, key, fn) {
 
 function clipboard() {
   const payload = document.getElementById("payload");
+  const status = document.getElementById("status");
+
   payload.select();
   document.execCommand("copy");
   payload.setSelectionRange(0, 0);
+
+  status.textContent = "📋 Copied !";
+
+  setTimeout(() => {
+    status.textContent = "";
+  }, 2000);
 }
