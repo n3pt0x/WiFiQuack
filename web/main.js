@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function download() {
+export function download() {
   const payload = document.getElementById("payload").value;
   const status = document.getElementById("status");
 
@@ -40,7 +40,7 @@ function download() {
   }
 }
 
-async function run() {
+export async function run() {
   const payload = document.getElementById("payload").value;
   const status = document.getElementById("status");
 
