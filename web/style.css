@@ -1,4 +1,3 @@
-/* ===== BASE ===== */
 * {
     margin: 0;
     padding: 0;
@@ -22,7 +21,6 @@ body {
     width: 100%;
 }
 
-/* ===== TYPOGRAPHIE ===== */
 h1 {
     font-size: 2rem;
     font-weight: 600;
@@ -43,7 +41,7 @@ h1 .duck-icon {
     font-size: 1.1rem;
 }
 
-/* ===== FORMULAIRE ===== */
+/* form */
 textarea {
     width: 100%;
     height: 300px;
@@ -65,7 +63,40 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
 }
 
-/* ===== BOUTONS ===== */
+/* clipboard */
+.editor-wrapper {
+    position: relative;
+}
+
+.editor-wrapper textarea {
+    padding-right: 50px;
+}
+
+.copy-btn {
+    position: absolute;
+    right: 10px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #8b949e;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.editor-wrapper:hover .copy-btn,
+.copy-btn:hover {
+    opacity: 1;
+}
+
+.copy-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+/* button */
 button {
     padding: 10px 24px;
     font-size: 1.05rem;
@@ -87,7 +118,7 @@ button:active {
     transform: scale(0.97);
 }
 
-/* ===== BOUTON GROUP ===== */
+/* button-group */
 .button-group {
     display: flex;
     gap: 10px;
@@ -117,7 +148,7 @@ button:active {
     margin: 0;
 }
 
-/* ===== STATUS ===== */
+/* status */
 #status {
     margin-top: 14px;
     font-style: italic;
@@ -133,7 +164,7 @@ button:active {
     color: #f85149;
 }
 
-/* ==== CONFIG PAGE === */
+/* config page */
 
 input,
 select {
@@ -183,7 +214,7 @@ button[type="submit"]:disabled {
     margin-top: 1rem;
 }
 
-/* ===== 404 PAGE ===== */
+/* 404 */
 .error-container {
     display: flex;
     flex-direction: column;
@@ -222,7 +253,7 @@ button[type="submit"]:disabled {
     background: #f7a15e;
 }
 
-/* ===== RESPONSIVE ===== */
+/* responsive */
 @media (max-width: 600px) {
     h1 {
         font-size: 1.6rem;
