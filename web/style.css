@@ -1,284 +1,312 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-    background: #0d1117;
-    color: #c9d1d9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    sans-serif;
 }
 
 .container {
-    max-width: 800px;
-    width: 100%;
+  max-width: 800px;
+  width: 100%;
 }
 
 h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #f0f6fc;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 h1 .duck-icon {
-    font-size: 2.2rem;
+  font-size: 2.2rem;
 }
 
 .subtitle {
-    color: #8b949e;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
+  color: #8b949e;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
 }
 
 /* form */
 textarea {
-    width: 100%;
-    height: 300px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.95rem;
-    padding: 12px;
-    background: #161b22;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    resize: vertical;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease;
+  width: 100%;
+  height: 300px;
+  font-family: "Fira Code", "Courier New", monospace;
+  font-size: 0.95rem;
+  padding: 12px;
+  background: #161b22;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
 }
 
 textarea:focus {
-    outline: none;
-    border-color: #f0883e;
-    box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
+  outline: none;
+  border-color: #f0883e;
+  box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
 }
 
 /* clipboard */
 .editor-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .editor-wrapper textarea {
-    padding-right: 50px;
+  padding-right: 50px;
 }
 
 .copy-btn {
-    position: absolute;
-    right: 10px;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    color: #8b949e;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 6px;
-    opacity: 0;
-    transition: opacity 0.2s;
+  position: absolute;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #8b949e;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
 .editor-wrapper:hover .copy-btn,
 .copy-btn:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .copy-btn:hover {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 /* button */
 button {
-    padding: 10px 24px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    background: #f0883e;
-    color: #0d1117;
-    border: none;
-    border-radius: 6px;
-    transition: background 0.2s ease, transform 0.1s ease;
-    margin-top: 12px;
+  padding: 10px 24px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f0883e;
+  color: #0d1117;
+  border: none;
+  border-radius: 6px;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+  margin-top: 12px;
 }
 
 button:hover {
-    background: #f7a15e;
+  background: #f7a15e;
 }
 
 button:active {
-    transform: scale(0.97);
+  transform: scale(0.97);
 }
 
 /* button-group */
 .button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .button-group button {
-    flex: 1;
-    margin: 0;
-    text-align: center;
+  flex: 1;
+  margin: 0;
+  text-align: center;
 }
 
 .button-group button[type="submit"] {
-    flex: 1;
-    width: 100%;
-    margin: 0;
+  flex: 1;
+  width: 100%;
+  margin: 0;
 }
 
 .button-group .btn-link {
-    flex: 1;
-    display: block;
-    text-decoration: none;
+  flex: 1;
+  display: block;
+  text-decoration: none;
 }
 
 .button-group .btn-link button {
-    width: 100%;
-    margin: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.button-success {
+  background: #3fb950;
+}
+
+.button-success:hover {
+  background: #2ea043;
+}
+
+.button-success:active {
+  background: #238636;
 }
 
 /* status */
 #status {
-    margin-top: 14px;
-    font-style: italic;
-    color: #8b949e;
-    min-height: 1.5rem;
+  margin-top: 14px;
+  font-style: italic;
+  color: #8b949e;
+  min-height: 1.5rem;
 }
 
 #status.success {
-    color: #3fb950;
+  color: #3fb950;
 }
 
 #status.error {
-    color: #f85149;
+  color: #f85149;
 }
 
 /* config page */
 
 input,
 select {
-    width: 100%;
-    padding: 10px 12px;
-    background: #161b22;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s ease;
-    box-sizing: border-box;
-    margin-top: 4px;
+  width: 100%;
+  padding: 10px 12px;
+  background: #161b22;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  margin-top: 4px;
 }
 
 input:focus,
 select:focus {
-    outline: none;
-    border-color: #f0883e;
-    box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
+  outline: none;
+  border-color: #f0883e;
+  box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
 }
 
 label {
-    display: block;
-    margin-top: 1.2rem;
-    margin-bottom: 0.2rem;
-    font-weight: 500;
-    color: #f0f6fc;
+  display: block;
+  margin-top: 1.2rem;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+  color: #f0f6fc;
 }
 
 label:first-of-type {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 button[type="submit"] {
-    width: 100%;
-    margin-top: 1.5rem;
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 button[type="submit"]:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 #status {
-    text-align: center;
-    margin-top: 1rem;
+  text-align: center;
+  margin-top: 1rem;
 }
 
 /* 404 */
 .error-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .error-code {
-    font-size: 6rem;
-    font-weight: 700;
-    color: #f0883e;
-    line-height: 1;
-    margin-bottom: 0.5rem;
+  font-size: 6rem;
+  font-weight: 700;
+  color: #f0883e;
+  line-height: 1;
+  margin-bottom: 0.5rem;
 }
 
 .error-message {
-    font-size: 1.2rem;
-    color: #8b949e;
-    margin-bottom: 2rem;
-    line-height: 1.6;
+  font-size: 1.2rem;
+  color: #8b949e;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
 .home-link {
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    background: #f0883e;
-    color: #0d1117;
-    text-decoration: none;
-    font-weight: 600;
-    border-radius: 6px;
-    transition: background 0.2s ease;
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background: #f0883e;
+  color: #0d1117;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
 .home-link:hover {
-    background: #f7a15e;
+  background: #f7a15e;
 }
 
 /* responsive */
 @media (max-width: 600px) {
-    h1 {
-        font-size: 1.6rem;
-        flex-wrap: wrap;
-    }
+  h1 {
+    font-size: 1.6rem;
+    flex-wrap: wrap;
+  }
 
-    .error-code {
-        font-size: 4rem;
-    }
+  .error-code {
+    font-size: 4rem;
+  }
 
-    textarea {
-        height: 200px;
-        font-size: 0.85rem;
-    }
+  textarea {
+    height: 200px;
+    font-size: 0.85rem;
+  }
 
-    button {
-        width: 100%;
-        text-align: center;
-    }
+  button {
+    width: 100%;
+    text-align: center;
+  }
 
-    .button-group {
-        flex-wrap: wrap;
-    }
+  .button-group {
+    flex-wrap: wrap;
+  }
 
-    .button-group button {
-        flex: 1 1 100%;
-    }
+  .button-group button {
+    flex: 1 1 100%;
+  }
+
+  .editor-wrapper textarea {
+    padding-right: 44px;
+    font-size: 14px;
+  }
+
+  .copy-btn {
+    right: 10px;
+    font-size: 16px;
+    padding: 4px 8px;
+    max-width: 34px;
+  }
 }
