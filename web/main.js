@@ -1,7 +1,7 @@
 document.getElementById("duckyForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  run();
-});
+    e.preventDefault();
+    run();
+  });
 
 document.getElementById("download").addEventListener("click", function () {
   download();
@@ -83,25 +83,30 @@ function upload() {
       console.error("Select a file please");
     }
 
-    status.textContent = `File: ${file.name} (${file.size} bytes) has been uploaded`;
+    const maxSizeUpload = 50;
+    if (file.size < maxSizeUpload * 1024) {
+      status.textContent = `File: ${file.name} (${file.size} bytes) has been uploaded`;
 
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      try {
-        const content = event.target.result;
-        payload.value = content;
-        fileInput.remove();
-      } catch (error) {
-        status.textContent = `Error: ${error.message}`;
-        console.error("Error: " + error.message);
-      }
-      reader.error = function () {
-        status.textContent = `Error: ${error.message}`;
-        console.error("Error: " + error.message);
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        try {
+          const content = event.target.result;
+          payload.value = content;
+          fileInput.remove();
+        } catch (error) {
+          status.textContent = `Error: ${error.message}`;
+          console.error("Error: " + error.message);
+        }
+        reader.error = function () {
+          status.textContent = `Error: ${error.message}`;
+          console.error("Error: " + error.message);
+        };
       };
-    };
-    reader.readAsText(file);
-    fileInput.value = "";
+      reader.readAsText(file);
+      fileInput.value = "";
+    } else {
+      status.textContent = `Error: File is too large, he must be < ${maxSizeUpload}ko`;
+    }
   });
 
   fileInput.addEventListener("cancel", function () {
