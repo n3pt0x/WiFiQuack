@@ -16,6 +16,10 @@ document.getElementById("copyBtn").addEventListener("click", function (e) {
   clipboard();
 });
 
+document.getElementById("cleanBtn").addEventListener("click", () => {
+  document.getElementById("payload").value = "";
+});
+
 function handleShortCut(event, key, fn) {
   if (event.ctrlKey && event.key == key) {
     event.preventDefault();
