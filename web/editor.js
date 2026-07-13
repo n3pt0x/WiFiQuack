@@ -15,14 +15,15 @@ const shortcuts = {
 let saveTimeout = null;
 
 document.getElementById("payload").addEventListener("input", () => {
-  if (saveItem) {
+  if (saveTimeout) {
     clearTimeout(saveTimeout);
   }
 
   saveTimeout = setTimeout(() => {
     const payload = document.getElementById("payload").value;
     saveItem(STORAGE_SCRIPT_KEY, payload);
-  }, 2000);
+    saveTimeout = null;
+  }, 500);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -84,8 +85,8 @@ export function getItem(key) {
   try {
     return localStorage.getItem(key);
   } catch (error) {
-    console.error("Error saving to localStorage: ", error);
-    return false;
+    console.error("Error reading to localStorage: ", error);
+    return null;
   }
 }
 
@@ -96,10 +97,10 @@ export function saveItem(key, payload) {
       return true;
     } catch (error) {
       console.error("Error saving to localStorage: ", error);
-      return false;
+      return null;
     }
   }
-  return false;
+  return null;
 }
 
 export function removeItem(key) {
@@ -108,6 +109,6 @@ export function removeItem(key) {
     return true;
   } catch (error) {
     console.error("Error saving to localStorage: ", error);
-    return false;
+    return null;
   }
 }

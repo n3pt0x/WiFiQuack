@@ -1,3 +1,5 @@
+import { updateStatus } from "./editor.js";
+
 document
   .getElementById("duckyForm")
   .addEventListener("submit", async function (e) {
@@ -18,7 +20,6 @@ let statusInterval = null;
 export async function run() {
   const runBtn = document.getElementById("runBtn");
   const payload = document.getElementById("payload").value;
-  const status = document.getElementById("status");
 
   if (payload != "") {
     try {
@@ -32,21 +33,21 @@ export async function run() {
         body: "script=" + encodeURIComponent(payload),
       });
       const result = await response.text();
-      status.textContent = `${result}`;
+      stopLoadingStatus();
+      updateStatus(`${result}`);
     } catch (error) {
-      status.textContent = `Error: ${error.message}`;
+      stopLoadingStatus();
+      updateStatus(`Error: ${error.message}`);
     } finally {
       runBtn.disabled = false;
-      stopLoagdingStatus();
     }
   } else {
-    status.textContent = "Error: Cannot send an empty payload";
+    updateStatus("Error: Cannot send an empty payload");
   }
 }
 
 export function download() {
   const payload = document.getElementById("payload").value;
-  const status = document.getElementById("status");
 
   if (payload != "") {
     const filename = prompt("Enter filename", "payload.bin");
@@ -62,10 +63,10 @@ export function download() {
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
-      status.textContent = "File downloaded correctly";
+      updateStatus("File downloaded correctly");
     }
   } else {
-    status.textContent = "Error: Cannot download an empty file";
+    updateStatus("Error: Cannot download an empty file");
   }
 }
 
@@ -79,37 +80,41 @@ function upload() {
 
   fileInput.addEventListener("change", function (e) {
     const payload = document.getElementById("payload");
-    const status = document.getElementById("status");
 
     const file = e.target.files[0];
 
     if (!file) {
       console.error("Select a file please");
+      fileInput.remove();
+      return;
     }
 
     const maxSizeUpload = 50;
     if (file.size < maxSizeUpload * 1024) {
-      status.textContent = `File: ${file.name} (${file.size} bytes) has been uploaded`;
+      updateStatus(`File: ${file.name} (${file.size} bytes) has been uploaded`);
 
       const reader = new FileReader();
       reader.onload = function (event) {
         try {
           const content = event.target.result;
           payload.value = content;
-          fileInput.remove();
         } catch (error) {
-          status.textContent = `Error: ${error.message}`;
+          updateStatus(`Error: ${error.message}`);
           console.error("Error: " + error.message);
+        } finally {
+          fileInput.remove();
         }
       };
       reader.onerror = function (e) {
-        status.textContent = `Error: ${e.target.error.message}`;
+        updateStatus(`Error: ${e.target.error.message}`);
         console.error("Error: " + e.target.error.message);
+        fileInput.remove();
       };
       reader.readAsText(file);
       fileInput.value = "";
     } else {
-      status.textContent = `Error: File is too large, he must be < ${maxSizeUpload}ko`;
+      updateStatus(`Error: File is too large, he must be < ${maxSizeUpload}ko`);
+      fileInput.remove();
     }
   });
 
@@ -119,7 +124,6 @@ function upload() {
 }
 
 function startLoadingStatus(message) {
-  const status = document.getElementById("status");
   const spinnerChars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
   let idx = 0;
 
@@ -130,11 +134,11 @@ function startLoadingStatus(message) {
 
   statusInterval = setInterval(() => {
     idx = (idx + 1) % spinnerChars.length;
-    status.textContent = `${message} ${spinnerChars[idx]}`;
+    updateStatus(`${message} ${spinnerChars[idx]}`);
   }, 100);
 }
 
-function stopLoagdingStatus(message) {
+function stopLoadingStatus() {
   if (statusInterval) {
     clearInterval(statusInterval);
     statusInterval = null;
