@@ -11,6 +11,7 @@ void handleIndex();
 void handleSettings();
 void handleMainJS();
 void handleSettingsJS();
+void handleEditorJS();
 void handleCSS();
 void handle404();
 void handleDuckyScript();
