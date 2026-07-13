@@ -1,4 +1,6 @@
-document.getElementById("duckyForm").addEventListener("submit", async function (e) {
+document
+  .getElementById("duckyForm")
+  .addEventListener("submit", async function (e) {
     e.preventDefault();
     run();
   });
@@ -11,15 +13,16 @@ document.getElementById("upload").addEventListener("click", function () {
   upload();
 });
 
+let statusInterval = null;
+
 export async function run() {
   const runBtn = document.getElementById("runBtn");
   const payload = document.getElementById("payload").value;
   const status = document.getElementById("status");
 
   if (payload != "") {
-    status.textContent = "Payload sending ...";
-
     try {
+      startLoadingStatus("Payload sending");
       runBtn.disabled = true;
       const response = await fetch("/run", {
         method: "POST",
@@ -34,6 +37,7 @@ export async function run() {
       status.textContent = `Error: ${error.message}`;
     } finally {
       runBtn.disabled = false;
+      stopLoagdingStatus();
     }
   } else {
     status.textContent = "Error: Cannot send an empty payload";
@@ -97,10 +101,10 @@ function upload() {
           status.textContent = `Error: ${error.message}`;
           console.error("Error: " + error.message);
         }
-        reader.error = function () {
-          status.textContent = `Error: ${error.message}`;
-          console.error("Error: " + error.message);
-        };
+      };
+      reader.onerror = function (e) {
+        status.textContent = `Error: ${e.target.error.message}`;
+        console.error("Error: " + e.target.error.message);
       };
       reader.readAsText(file);
       fileInput.value = "";
@@ -112,4 +116,27 @@ function upload() {
   fileInput.addEventListener("cancel", function () {
     fileInput.remove();
   });
+}
+
+function startLoadingStatus(message) {
+  const status = document.getElementById("status");
+  const spinnerChars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+  let idx = 0;
+
+  if (statusInterval) {
+    clearInterval(statusInterval);
+    statusInterval = null;
+  }
+
+  statusInterval = setInterval(() => {
+    idx = (idx + 1) % spinnerChars.length;
+    status.textContent = `${message} ${spinnerChars[idx]}`;
+  }, 100);
+}
+
+function stopLoagdingStatus(message) {
+  if (statusInterval) {
+    clearInterval(statusInterval);
+    statusInterval = null;
+  }
 }
