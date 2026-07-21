@@ -37,17 +37,24 @@ namespace settings {
     }
 
     bool begin() {
-        if (!LittleFS.begin()) {
-            logToBuffer("LittleFS mount failed. Attempting to format...");
-            
-            // create partition if not defined
-            if (!LittleFS.begin(true)) {
-                logToBuffer("LittleFS format failed. Using RAM only.");
+        #ifdef PLATFORM_ESP32
+            if (!LittleFS.begin()) {
+                logToBuffer("LittleFS mount failed. Attempting to format...");
+                
+                if (!LittleFS.begin(true)) {
+                    logToBuffer("LittleFS format failed. Using RAM only.");
+                    fsInitialized = false;
+                    return false;
+                }
+                logToBuffer("LittleFS formatted successfully.");
+            }
+        #elif defined(PLATFORM_PICO)
+            if (!LittleFS.begin()) {
+                logToBuffer("LittleFS mount failed. Using RAM only.");
                 fsInitialized = false;
                 return false;
             }
-            logToBuffer("LittleFS formatted successfully.");
-        }
+        #endif
         
         fsInitialized = true;
         logToBuffer("LittleFS mounted successfully.");
