@@ -5,3 +5,6 @@
 
 # VSCode
 .vscode/
+
+# Python
+venv/
