@@ -1,4 +1,4 @@
-import { updateStatus } from "./editor.js";
+import { updateStatus, saveItem, STORAGE_SCRIPT_KEY } from "./editor.js";
 
 document
   .getElementById("duckyForm")
@@ -104,6 +104,7 @@ function upload() {
         try {
           const content = event.target.result;
           payload.value = content;
+          saveItem(STORAGE_SCRIPT_KEY, content);
         } catch (error) {
           updateStatus(`Error: ${error.message}`);
           console.error("Error: " + error.message);
