@@ -25,6 +25,8 @@ export async function run() {
     try {
       startLoadingStatus("Payload sending");
       runBtn.disabled = true;
+
+      let startTime = Date.now();
       const response = await fetch("/run", {
         method: "POST",
         headers: {
@@ -33,8 +35,12 @@ export async function run() {
         body: "script=" + encodeURIComponent(payload),
       });
       const result = await response.text();
+
+      let executionTime = ((Date.now() - startTime) / 1000).toFixed(2);
+      executionTime = executionTime + (executionTime < 1 ? "ms" : "s");
+
       stopLoadingStatus();
-      updateStatus(`${result}`);
+      updateStatus(`${result} (${executionTime})`);
     } catch (error) {
       stopLoadingStatus();
       updateStatus(`Error: ${error.message}`);
