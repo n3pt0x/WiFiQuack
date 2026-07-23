@@ -44,9 +44,16 @@ namespace keyboard_utils {
         begin();
     }
 
-    void pressKey(uint8_t key) {
+    void press(uint8_t key) {
         Keyboard.press(key);
+    }
+
+    void release(uint8_t key) {
         Keyboard.release(key);
+    }
+
+    void releaseAll() {
+        Keyboard.releaseAll();
     }
 
     void pressCombination(uint8_t modifier, uint8_t key) {

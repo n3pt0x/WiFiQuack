@@ -17,7 +17,9 @@ namespace keyboard_utils {
 
     void begin();
     void setLayout(Layout layout);
-    void pressKey(uint8_t key);
+    void press(uint8_t key);
+    void release(uint8_t key);
+    void releaseAll();
     void pressCombination(uint8_t modifier, uint8_t key);
     void writeKey(const uint8_t key);
     void sendString(const String& str);
