@@ -76,7 +76,7 @@ void handleDuckyScript() {
         Serial.printf("Script recieved:\n%s\n", script.c_str());
         
         if (duckyparser::execute(script, errorMsg)) {
-            server.send(200, "text/html", "Script executed successfully.");
+            server.send(200, "text/html", "Script executed successfully");
         } else {
             server.send(400, "text/html", "[Error] " + errorMsg);
         }

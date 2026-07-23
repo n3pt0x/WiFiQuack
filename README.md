@@ -116,12 +116,6 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 ---
 
-## Credits
-
-- Inspired by [Spacehuhn](https://github.com/SpacehuhnTech) and the WiFi Duck project.
-
----
-
 ## Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
