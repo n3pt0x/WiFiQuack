@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "keyboard_def.h"
 #include "keyboard_utils.h"
+#include "keymap.h"
 #include "duckyparser.h"
 #include "utils.h"
 
@@ -14,75 +15,47 @@ namespace duckyparser {
         lastLine = "";
     }
 
+    std::vector<String> splitParams(const String& line) {
+        std::vector<String> params;
+        String rest = line.substring(line.indexOf(' ') + 1);
+
+        int pos = 0;
+        while (pos < rest.length()) {
+            while (pos < rest.length() && rest[pos] == ' ') pos++;
+            if (pos >= rest.length()) break;
+            
+            int end = rest.indexOf(' ', pos);
+            if (end == -1) end = rest.length();
+
+            params.push_back(rest.substring(pos, end));
+            pos = end + 1;
+        }
+            
+        return params;
+    }
+
     bool press(String command, String& errorMsg) {
-        // Modifiers
-        if      (command == "GUI" || command == "WINDOWS")      keyboard_utils::writeKey(KEY_LEFT_GUI);
-        else if (command == "CTRL" || command == "CONTROL")     keyboard_utils::writeKey(KEY_LEFT_CTRL);
-        else if (command == "SHIFT")                            keyboard_utils::writeKey(KEY_LEFT_SHIFT);
-        else if (command == "ALT")                              keyboard_utils::writeKey(KEY_LEFT_ALT);
-        
-        // Keys
-        else if (command == "ENTER")                            keyboard_utils::writeKey(KEY_RETURN);
-        else if (command == "UP" || command == "UPARROW")       keyboard_utils::writeKey(KEY_UP_ARROW);
-        else if (command == "DOWN" || command == "DOWNARROW")   keyboard_utils::writeKey(KEY_DOWN_ARROW);
-        else if (command == "LEFT" || command == "LEFTARROW")   keyboard_utils::writeKey(KEY_LEFT_ARROW);
-        else if (command == "RIGHT" || command == "RIGHTARROW") keyboard_utils::writeKey(KEY_RIGHT_ARROW);
-        else if (command == "BACKSPACE")                        keyboard_utils::writeKey(KEY_BACKSPACE);
-        else if (command == "TAB")                              keyboard_utils::writeKey(KEY_TAB);
-        else if (command == "MENU")                             keyboard_utils::writeKey(KEY_MENU);
-        else if (command == "ESC" || command == "ESCAPE")       keyboard_utils::writeKey(KEY_ESC);
-        else if (command == "INSERT")                           keyboard_utils::writeKey(KEY_INSERT);
-        else if (command == "DELETE")                           keyboard_utils::writeKey(KEY_DELETE);
-        else if (command == "PAGEUP")                           keyboard_utils::writeKey(KEY_PAGE_UP);
-        else if (command == "PAGEDOWN")                         keyboard_utils::writeKey(KEY_PAGE_DOWN);
-        else if (command == "HOME")                             keyboard_utils::writeKey(KEY_HOME);
-        else if (command == "END")                              keyboard_utils::writeKey(KEY_END);
-        else if (command == "CAPSLOCK")                         keyboard_utils::writeKey(KEY_CAPS_LOCK);
-        else if (command == "PRINTSCREEN")                      keyboard_utils::writeKey(KEY_PRINT_SCREEN);
-        else if (command == "SCROLLLOCK")                       keyboard_utils::writeKey(KEY_SCROLL_LOCK);
-        else if (command == "PAUSE")                            keyboard_utils::writeKey(KEY_PAUSE);
-
-        // Function keys
-        else if (command == "F1")                               keyboard_utils::writeKey(KEY_F1);
-        else if (command == "F2")                               keyboard_utils::writeKey(KEY_F2);
-        else if (command == "F3")                               keyboard_utils::writeKey(KEY_F3);
-        else if (command == "F4")                               keyboard_utils::writeKey(KEY_F4);
-        else if (command == "F5")                               keyboard_utils::writeKey(KEY_F5);
-        else if (command == "F6")                               keyboard_utils::writeKey(KEY_F6);
-        else if (command == "F7")                               keyboard_utils::writeKey(KEY_F7);
-        else if (command == "F8")                               keyboard_utils::writeKey(KEY_F8);
-        else if (command == "F9")                               keyboard_utils::writeKey(KEY_F9);
-        else if (command == "F10")                              keyboard_utils::writeKey(KEY_F10);
-        else if (command == "F11")                              keyboard_utils::writeKey(KEY_F11);
-        else if (command == "F12")                              keyboard_utils::writeKey(KEY_F12);
-
-        // Numeric keypad
-        else if (command == "NUM_LOCK")                         keyboard_utils::writeKey(KEY_NUM_LOCK);
-        else if (command == "NUM_ASTERISK")                     keyboard_utils::writeKey(KEY_KP_ASTERISK);
-        else if (command == "NUM_ENTER")                        keyboard_utils::writeKey(KEY_KP_ENTER);
-        else if (command == "NUM_MINUS")                        keyboard_utils::writeKey(KEY_KP_MINUS);
-        else if (command == "NUM_PLUS")                         keyboard_utils::writeKey(KEY_KP_PLUS);
-        else if (command == "NUM_0")                            keyboard_utils::writeKey(KEY_KP_0);
-        else if (command == "NUM_1")                            keyboard_utils::writeKey(KEY_KP_1);
-        else if (command == "NUM_2")                            keyboard_utils::writeKey(KEY_KP_2);
-        else if (command == "NUM_3")                            keyboard_utils::writeKey(KEY_KP_3);
-        else if (command == "NUM_4")                            keyboard_utils::writeKey(KEY_KP_4);
-        else if (command == "NUM_5")                            keyboard_utils::writeKey(KEY_KP_5);
-        else if (command == "NUM_6")                            keyboard_utils::writeKey(KEY_KP_6);
-        else if (command == "NUM_7")                            keyboard_utils::writeKey(KEY_KP_7);
-        else if (command == "NUM_8")                            keyboard_utils::writeKey(KEY_KP_8);
-        else if (command == "NUM_9")                            keyboard_utils::writeKey(KEY_KP_9);
-        else if (command == "NUM_DOT")                          keyboard_utils::writeKey(KEY_KP_DOT);
+        uint8_t code = getHIDCode(command);
+        if (code != 0) {
+            keyboard_utils::writeKey(code);
+            return true;
+        }
 
         // Power Control
-        else if (command == "POWER")                            keyboard_utils::pressPower();
-        else if (command == "RESET")                            keyboard_utils::pressReset();
-        else if (command == "SLEEP")                            keyboard_utils::pressSleep();
-        else {
-            return setError(errorMsg, "Unknown command: " + command);
+        if (command == "POWER") {
+            keyboard_utils::pressPower();
+            return true;
+        }
+        if (command == "RESET") {
+            keyboard_utils::pressReset();
+            return true;
+        }
+        if (command == "SLEEP"){
+            keyboard_utils::pressSleep();
+            return true;
         }
         
-        return true;
+        return setError(errorMsg, "Unknown command: " + command);
     }
 
     bool parser(String line, String& errorMsg) {
@@ -161,6 +134,16 @@ namespace duckyparser {
                 } else {
                     return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
                 }
+            } else if (command == "COMBO") {
+                std::vector<String> params = splitParams(line);
+                    for (const auto& param : params) {
+                        uint8_t code = getHIDCode(param);
+                        if (code != 0) {
+                            keyboard_utils::press(code);
+                        }
+                    }
+                delay(50);
+                keyboard_utils::releaseAll();
             }
             else if (command == "SHIFT") {
                 if (param.length() == 1) {
@@ -231,5 +214,4 @@ namespace duckyparser {
 
         return true;
     }
-
 }
