@@ -30,3 +30,25 @@ String cleanLine(String line) {
   line.trim();
   return line;
 }
+
+std::vector<String> splitParams(const String &line){
+  std::vector<String> params;
+  String rest = line.substring(line.indexOf(' ') + 1);
+
+  int pos = 0;
+  while (pos < rest.length())  {
+    while (pos < rest.length() && rest[pos] == ' ')
+      pos++;
+    if (pos >= rest.length())
+      break;
+
+    int end = rest.indexOf(' ', pos);
+    if (end == -1)
+      end = rest.length();
+
+    params.push_back(rest.substring(pos, end));
+    pos = end + 1;
+  }
+
+  return params;
+}
