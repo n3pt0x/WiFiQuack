@@ -55,7 +55,7 @@ namespace keyboard_utils {
         Keyboard.releaseAll();
     }
 
-    void writeKey(const uint8_t key) {
+    void write(const uint8_t key) {
         Keyboard.write(key);
     }
 
