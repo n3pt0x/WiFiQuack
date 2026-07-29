@@ -15,29 +15,10 @@ namespace duckyparser {
         lastLine = "";
     }
 
-    std::vector<String> splitParams(const String& line) {
-        std::vector<String> params;
-        String rest = line.substring(line.indexOf(' ') + 1);
-
-        int pos = 0;
-        while (pos < rest.length()) {
-            while (pos < rest.length() && rest[pos] == ' ') pos++;
-            if (pos >= rest.length()) break;
-            
-            int end = rest.indexOf(' ', pos);
-            if (end == -1) end = rest.length();
-
-            params.push_back(rest.substring(pos, end));
-            pos = end + 1;
-        }
-            
-        return params;
-    }
-
     bool press(String command, String& errorMsg) {
         uint8_t code = getHIDCode(command);
         if (code != 0) {
-            keyboard_utils::writeKey(code);
+            keyboard_utils::write(code);
             return true;
         }
 
@@ -109,14 +90,30 @@ namespace duckyparser {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_GUI, param[0]);
                 } else {
-                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    uint8_t HIDCode = getHIDCode(param);
+
+                    if (HIDCode) {
+                        keyboard_utils::press(KEY_LEFT_GUI);
+                        keyboard_utils::press(HIDCode);
+                        keyboard_utils::releaseAll();
+                    } else {
+                        return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    }
                 }
             }
             else if (command == "CTRL" || command == "CONTROL") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_CTRL, param[0]);
                 } else {
-                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    uint8_t HIDCode = getHIDCode(param);
+
+                    if (HIDCode) {
+                        keyboard_utils::press(KEY_LEFT_CTRL);
+                        keyboard_utils::press(HIDCode);
+                        keyboard_utils::releaseAll();
+                    } else {
+                        return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    }
                 }
             }
             else if (command == "KEYCODE") {
@@ -129,19 +126,28 @@ namespace duckyparser {
                     uint8_t modifier = (uint8_t)strtol(modifierStr.c_str(), NULL, 0);
                     uint8_t key = (uint8_t)strtol(keyStr.c_str(), NULL, 0);
 
-                    keyboard_utils::writeKey(modifier);
-                    keyboard_utils::writeKey(key);
+                    keyboard_utils::write(modifier);
+                    keyboard_utils::write(key);
                 } else {
                     return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
                 }
-            } else if (command == "COMBO") {
+            }
+            else if (command == "COMBO") {
                 std::vector<String> params = splitParams(line);
-                    for (const auto& param : params) {
+                
+                for (const auto& param : params) {
+                    if (param.length() == 1) {
+                        keyboard_utils::press(param[0]);
+                    } else {
                         uint8_t code = getHIDCode(param);
                         if (code != 0) {
                             keyboard_utils::press(code);
+                        } else {
+                            errorMsg = "Unknown key in COMBO: " + param;
+                            return false;
                         }
                     }
+                }
                 delay(50);
                 keyboard_utils::releaseAll();
             }
@@ -149,14 +155,30 @@ namespace duckyparser {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_SHIFT, param[0]);
                 } else {
-                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    uint8_t HIDCode = getHIDCode(param);
+
+                    if (HIDCode) {
+                        keyboard_utils::press(KEY_LEFT_SHIFT);
+                        keyboard_utils::press(HIDCode);
+                        keyboard_utils::releaseAll();
+                    } else {
+                        return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    }
                 }
             }
             else if (command == "ALT") {
                 if (param.length() == 1) {
                     keyboard_utils::pressCombination(KEY_LEFT_ALT, param[0]);
                 } else {
-                    return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    uint8_t HIDCode = getHIDCode(param);
+
+                    if (HIDCode) {
+                        keyboard_utils::press(KEY_LEFT_ALT);
+                        keyboard_utils::press(HIDCode);
+                        keyboard_utils::releaseAll();
+                    } else {
+                        return setError(errorMsg, "Invalid parameter for the the command: " + command);
+                    }
                 }
             }
             else if (command == "LOCALE") {
