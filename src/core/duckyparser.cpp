@@ -13,6 +13,22 @@ namespace duckyparser {
         defaultDelay = 0;
     }
 
+    bool handleModifierKey(const String& command, const String& param, const uint8_t HIDCode, String& errorMsg) {
+        if (param.length() == 1) {
+            keyboard_utils::pressCombination(HIDCode, param[0]);
+        } else {
+            uint8_t HIDCodeParam = getHIDCode(param);
+            if (HIDCodeParam) {
+                keyboard_utils::press(HIDCode);
+                keyboard_utils::press(HIDCodeParam);
+                keyboard_utils::releaseAll();
+            } else {
+                return setError(errorMsg, "Invalid parameter for " + command + ": " + param);
+            }
+        }
+        return true;
+    }
+
     bool press(String command, String& errorMsg) {
         uint8_t code = getHIDCode(command);
         if (code != 0) {
@@ -78,32 +94,10 @@ namespace duckyparser {
                 if (defaultDelay < 0) defaultDelay = 0;
             }
             else if (command == "GUI" || command == "WINDOWS") {
-                if (param.length() == 1) {
-                    keyboard_utils::pressCombination(KEY_LEFT_GUI, param[0]);
-                } else {
-                    uint8_t HIDCode = getHIDCode(param);
-                    if (HIDCode) {
-                        keyboard_utils::press(KEY_LEFT_GUI);
-                        keyboard_utils::press(HIDCode);
-                        keyboard_utils::releaseAll();
-                    } else {
-                        return setError(errorMsg, "Invalid parameter for GUI: " + param);
-                    }
-                }
+                if (!handleModifierKey(command, param, KEY_LEFT_GUI, errorMsg)) return false;
             }
             else if (command == "CTRL" || command == "CONTROL") {
-                if (param.length() == 1) {
-                    keyboard_utils::pressCombination(KEY_LEFT_CTRL, param[0]);
-                } else {
-                    uint8_t HIDCode = getHIDCode(param);
-                    if (HIDCode) {
-                        keyboard_utils::press(KEY_LEFT_CTRL);
-                        keyboard_utils::press(HIDCode);
-                        keyboard_utils::releaseAll();
-                    } else {
-                        return setError(errorMsg, "Invalid parameter for CTRL: " + param);
-                    }
-                }
+                if (!handleModifierKey(command, param, KEY_LEFT_CTRL, errorMsg)) return false;
             }
             else if (command == "KEYCODE") {
                 int secondSpace = line.indexOf(' ', firstSpace + 1);
@@ -138,32 +132,10 @@ namespace duckyparser {
                 keyboard_utils::releaseAll();
             }
             else if (command == "SHIFT") {
-                if (param.length() == 1) {
-                    keyboard_utils::pressCombination(KEY_LEFT_SHIFT, param[0]);
-                } else {
-                    uint8_t HIDCode = getHIDCode(param);
-                    if (HIDCode) {
-                        keyboard_utils::press(KEY_LEFT_SHIFT);
-                        keyboard_utils::press(HIDCode);
-                        keyboard_utils::releaseAll();
-                    } else {
-                        return setError(errorMsg, "Invalid parameter for SHIFT: " + param);
-                    }
-                }
+                if (!handleModifierKey(command, param, KEY_LEFT_CTRL, errorMsg)) return false;
             }
             else if (command == "ALT") {
-                if (param.length() == 1) {
-                    keyboard_utils::pressCombination(KEY_LEFT_ALT, param[0]);
-                } else {
-                    uint8_t HIDCode = getHIDCode(param);
-                    if (HIDCode) {
-                        keyboard_utils::press(KEY_LEFT_ALT);
-                        keyboard_utils::press(HIDCode);
-                        keyboard_utils::releaseAll();
-                    } else {
-                        return setError(errorMsg, "Invalid parameter for ALT: " + param);
-                    }
-                }
+                if (!handleModifierKey(command, param, KEY_LEFT_ALT, errorMsg)) return false;
             }
             else if (command == "LOCALE") {
                 if      (param == "DE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DE);
