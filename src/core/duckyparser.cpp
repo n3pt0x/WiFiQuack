@@ -8,11 +8,9 @@
 namespace duckyparser {
 
     int defaultDelay = 0;
-    String lastLine = "";
 
     void reset() {
         defaultDelay = 0;
-        lastLine = "";
     }
 
     bool press(String command, String& errorMsg) {
@@ -78,28 +76,6 @@ namespace duckyparser {
                     return setError(errorMsg, "Invalid parameter for " + command + " : " + param);
                 }
                 if (defaultDelay < 0) defaultDelay = 0;
-            }
-            else if (command == "REPEAT" || command == "REPLAY") {
-                int replay = param.toInt();
-                if (replay < 0) {
-                    return setError(errorMsg, "Invalid parameter for " + command + " : " + param);
-                }
-
-                String lineToRepeat = lastLine;
-
-                if (lineToRepeat.isEmpty()) {
-                    return setError(errorMsg, "Nothing to repeat (last line is empty)");
-                }
-
-                if (lineToRepeat.startsWith("REPEAT") || lineToRepeat.startsWith("REPLAY")) {
-                    return setError(errorMsg, "Cannot repeat a REPEAT command");
-                }
-
-                for (int i = 0; i < replay; i++) {
-                    if (!parser(lineToRepeat, errorMsg)) {
-                        return false;
-                    }
-                }
             }
             else if (command == "GUI" || command == "WINDOWS") {
                 if (param.length() == 1) {
@@ -217,33 +193,48 @@ namespace duckyparser {
             return false;
         }
 
+        std::vector<String> lines;
         int start = 0;
         int end = script.indexOf('\n');
 
         while (end != -1) {
-            String line = cleanLine(script.substring(start, end));
-            if (line != "") {
-                if (!line.startsWith("REPEAT") && !line.startsWith("REPLAY")) {
-                    lastLine = line;
-                }
-                if (!parser(line, errorMsg)) {
-                    return false;
-                }
-            }
+            lines.push_back(script.substring(start, end));
             start = end + 1;
             end = script.indexOf('\n', start);
         }
+        lines.push_back(script.substring(start)); // last line
 
-        String line = cleanLine(script.substring(start));
-        if (line != "") {
-            if (!line.startsWith("REPEAT") && !line.startsWith("REPLAY")) {
-                lastLine = line;
+        for (int i = 0; i < lines.size(); i++) {
+            String line = cleanLine(lines[i]);
+            if (line.isEmpty()) continue;
+            
+            if (line.startsWith("REPEAT") || line.startsWith("REPLAY")) {
+                String command = cleanLine(line.substring(0, line.indexOf(' ')));
+                String param = cleanLine(line.substring(line.indexOf(' ') + 1));
+                int replay = param.toInt();
+                String endKeywork = command == "REPEAT" ? "ENDREPEAT" : "ENDREPLAY";
+
+                int j = i + 1;
+                String bufferCommands;
+                while(j < lines.size() && !lines[j].startsWith(endKeywork)) {
+                    bufferCommands += lines[j] + "\n";
+                    j++;
+                }
+
+                if (j >= lines.size()) {
+                    return setError(errorMsg, "Missing " + endKeywork);
+                }
+                
+                for (int n = 0; n < replay; n++)  {
+                    if (!execute(bufferCommands, errorMsg)) return false;
+                }
+
+                i = j;
+                continue;
             }
-            if (!parser(line, errorMsg)) {
-                return false;
-            }
+
+            if (!parser(line, errorMsg)) return false;
         }
-
         return true;
     }
 }
