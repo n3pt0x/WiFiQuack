@@ -29,7 +29,7 @@ cat <<EOF > src/core/webfiles.h
 EOF
 
 for i in "${!var_names[@]}"; do
-    echo "const char ${var_names[$i]} PROGMEM = {${var_data[$i]}};" >> src/core/webfiles.h
+    echo "const uint8_t ${var_names[$i]} PROGMEM = {${var_data[$i]}};" >> src/core/webfiles.h
 done
 
 if [[ -d "$tmp_path" ]]; then

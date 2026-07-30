@@ -8,9 +8,10 @@
 
 WebServer server(WEB_SERVER_PORT);
 
-void reply(WebServer* server, int code, PGM_P content_type, PGM_P content, size_t contentLength) {
+void reply(WebServer* server, int code, const char* content_type, 
+           const void* content, size_t contentLength) {
     server->sendHeader("Content-Encoding", "gzip");
-    server->send_P(code, content_type, content, contentLength);
+    server->send_P(code, content_type, (const char*)content, contentLength);
 }
 
 void initWebServer() {
