@@ -11,9 +11,14 @@ AsyncWebServer server(WEB_SERVER_PORT);
 std::vector<PendingRequest> pendingRequests;
 const unsigned long TASK_TIMEOUT_MS = 60000;
 
-void reply(AsyncWebServerRequest* request, int code, const char* content_type, const uint8_t* content, size_t contentLength) {
+void reply(AsyncWebServerRequest* request, int code, const char* content_type, const uint8_t* content, size_t contentLength, std::initializer_list<Header> headers) {
     AsyncWebServerResponse* response = request->beginResponse(code, content_type, content, contentLength);
     response->addHeader("Content-Encoding", "gzip");
+
+    for (const auto& header: headers) {
+        response->addHeader(header.key, header.value);
+    }
+
     request->send(response);
 }
 
@@ -45,7 +50,6 @@ void initRoutes() {
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
         reply(request, 200, "text/css", PAGE_STYLE_CSS_GZ, sizeof(PAGE_STYLE_CSS_GZ));
     });
-
     server.onNotFound([](AsyncWebServerRequest *request) {
         reply(request, 404, "text/html", PAGE_404_HTML_GZ, sizeof(PAGE_404_HTML_GZ));
     });
