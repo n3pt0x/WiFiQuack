@@ -30,28 +30,28 @@ void initWebServer() {
 
 void initRoutes() {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ));
+        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ), {cache_control});
     });
     server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ));
+        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ), {cache_control});
     });
     server.on("/settings.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "text/html", PAGE_SETTINGS_HTML_GZ, sizeof(PAGE_SETTINGS_HTML_GZ));
+        reply(request, 200, "text/html", PAGE_SETTINGS_HTML_GZ, sizeof(PAGE_SETTINGS_HTML_GZ), {cache_control});
     });
     server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "application/javascript", PAGE_MAIN_JS_GZ, sizeof(PAGE_MAIN_JS_GZ));
+        reply(request, 200, "application/javascript", PAGE_MAIN_JS_GZ, sizeof(PAGE_MAIN_JS_GZ), {cache_control});
     });
     server.on("/settings.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "application/javascript", PAGE_SETTINGS_JS_GZ, sizeof(PAGE_SETTINGS_JS_GZ));
+        reply(request, 200, "application/javascript", PAGE_SETTINGS_JS_GZ, sizeof(PAGE_SETTINGS_JS_GZ), {cache_control});
     });
     server.on("/editor.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "application/javascript", PAGE_EDITOR_JS_GZ, sizeof(PAGE_EDITOR_JS_GZ));
+        reply(request, 200, "application/javascript", PAGE_EDITOR_JS_GZ, sizeof(PAGE_EDITOR_JS_GZ), {cache_control});
     });
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-        reply(request, 200, "text/css", PAGE_STYLE_CSS_GZ, sizeof(PAGE_STYLE_CSS_GZ));
+        reply(request, 200, "text/css", PAGE_STYLE_CSS_GZ, sizeof(PAGE_STYLE_CSS_GZ), {cache_control});
     });
     server.onNotFound([](AsyncWebServerRequest *request) {
-        reply(request, 404, "text/html", PAGE_404_HTML_GZ, sizeof(PAGE_404_HTML_GZ));
+        reply(request, 404, "text/html", PAGE_404_HTML_GZ, sizeof(PAGE_404_HTML_GZ), {cache_control});
     });
 
     server.on("/run", HTTP_POST, [](AsyncWebServerRequest *request) {

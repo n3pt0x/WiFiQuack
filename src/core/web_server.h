@@ -12,6 +12,8 @@ struct Header {
     const char* value;
 };
 
+static constexpr Header cache_control = {.key = "Cache-Control", .value = "max-age=3600"};
+
 void initWebServer();
 void initRoutes();
 void reply(AsyncWebServerRequest* request, int code, const char* content_type, const uint8_t* content, size_t contentLength, std::initializer_list<Header> headers = {});
