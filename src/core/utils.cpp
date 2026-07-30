@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include "core/utils.h"
+#include "utils.h"
+#include "debug.h"
 
 void printBanner() {
-  Serial.println(R"EOD(
+  debugln(R"EOD(
 ===================================================
 __        ___ _____ _  ___                   _    
 \ \      / (_)  ___(_)/ _ \ _   _  __ _  ___| | __
@@ -20,7 +21,7 @@ bool setError(String& errorMsg, const String& msg) {
 }
 
 bool returnError(String& errorMsg) {
-  Serial.println(errorMsg);
+  debugln(errorMsg);
   return false;
 }
 

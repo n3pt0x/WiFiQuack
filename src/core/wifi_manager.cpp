@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include "wifi_manager.h"
 #include "settings.h"
+#include "debug.h"
 
 bool startWiFiAP()
 {
@@ -9,8 +10,8 @@ bool startWiFiAP()
 }
 
 void printWiFiInfos() {
-    Serial.printf("SSID: %s\n", settings::wifi_ssid.c_str());
-    Serial.printf("Password: %s\n", settings::wifi_passphrase.c_str());
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.softAPIP());
+    debugf("SSID: %s\n", settings::wifi_ssid.c_str());
+    debugf("Password: %s\n", settings::wifi_passphrase.c_str());
+    debug("IP Address: ");
+    debugln(WiFi.softAPIP());
 }

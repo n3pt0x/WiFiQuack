@@ -1,9 +1,6 @@
 #pragma once
 
-const long SERIAL_BAUD = 115200;
+#include <Arduino.h>
 
-#ifdef DEBUG
-    #define STARTUP_DELAY 4000
-#else
-    #define STARTUP_DELAY 1000
-#endif
+#define VERSION "1.0.0"
+constexpr long SERIAL_BAUD = 115200;

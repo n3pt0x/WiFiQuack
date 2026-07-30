@@ -4,6 +4,7 @@
 #include "webfiles.h"
 #include "duckyparser.h"
 #include "settings.h"
+#include "debug.h"
 
 WebServer server(WEB_SERVER_PORT);
 
@@ -15,7 +16,7 @@ void reply(WebServer* server, int code, PGM_P content_type, PGM_P content, size_
 void initWebServer() {
     initRoutes();
     server.begin();
-    Serial.println("HTTP server started !");
+    debugln("HTTP server started !");
 }
 
 void initRoutes() {
@@ -73,7 +74,7 @@ void handleDuckyScript() {
     if (server.hasArg("script")) {
         String errorMsg;
         String script = server.arg("script");
-        Serial.printf("Script recieved:\n%s\n", script.c_str());
+        debugf("Script recieved:\n%s\n", script.c_str());
         
         if (duckyparser::execute(script, errorMsg)) {
             server.send(200, "text/html", "Script executed successfully");

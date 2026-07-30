@@ -1,6 +1,7 @@
 #include <LittleFS.h>
 #include <ArduinoJson.h>
 #include "settings.h"
+#include "debug.h"
 
 namespace settings {
     String wifi_ssid = "WiFiQuack";
@@ -216,7 +217,7 @@ namespace settings {
 
     void flushLog() {
         if (logBuffer.length() > 0) {
-            Serial.print(logBuffer);
+            debug(logBuffer);
             logBuffer = "";
         }
     }
