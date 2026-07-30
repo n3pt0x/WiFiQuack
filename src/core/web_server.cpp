@@ -5,13 +5,16 @@
 #include "duckyparser.h"
 #include "settings.h"
 #include "debug.h"
+#include <vector>
 
-WebServer server(WEB_SERVER_PORT);
+AsyncWebServer server(WEB_SERVER_PORT);
+std::vector<PendingRequest> pendingRequests;
+const unsigned long TASK_TIMEOUT_MS = 60000;
 
-void reply(WebServer* server, int code, const char* content_type, 
-           const void* content, size_t contentLength) {
-    server->sendHeader("Content-Encoding", "gzip");
-    server->send_P(code, content_type, (const char*)content, contentLength);
+void reply(AsyncWebServerRequest* request, int code, const char* content_type, const uint8_t* content, size_t contentLength) {
+    AsyncWebServerResponse* response = request->beginResponse(code, content_type, content, contentLength);
+    response->addHeader("Content-Encoding", "gzip");
+    request->send(response);
 }
 
 void initWebServer() {
@@ -21,96 +24,140 @@ void initWebServer() {
 }
 
 void initRoutes() {
-    // files
-    server.on("/", HTTP_GET, handleIndex);
-    server.on("/index.html", HTTP_GET, handleIndex);
-    server.on("/settings.html", HTTP_GET, handleSettings);
-    server.on("/main.js", HTTP_GET, handleMainJS);
-    server.on("/settings.js", HTTP_GET, handleSettingsJS);
-    server.on("/editor.js", HTTP_GET, handleEditorJS);
-    server.on("/style.css", HTTP_GET, handleCSS);
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ));
+    });
+    server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ));
+    });
+    server.on("/settings.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "text/html", PAGE_SETTINGS_HTML_GZ, sizeof(PAGE_SETTINGS_HTML_GZ));
+    });
+    server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "application/javascript", PAGE_MAIN_JS_GZ, sizeof(PAGE_MAIN_JS_GZ));
+    });
+    server.on("/settings.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "application/javascript", PAGE_SETTINGS_JS_GZ, sizeof(PAGE_SETTINGS_JS_GZ));
+    });
+    server.on("/editor.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "application/javascript", PAGE_EDITOR_JS_GZ, sizeof(PAGE_EDITOR_JS_GZ));
+    });
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        reply(request, 200, "text/css", PAGE_STYLE_CSS_GZ, sizeof(PAGE_STYLE_CSS_GZ));
+    });
 
-    // routes
-    server.on("/run", HTTP_POST, handleDuckyScript);
-    server.on("/settings", HTTP_GET, getSettings);
-    server.on("/settings", HTTP_POST, postSettings);
-    server.on("/reboot", HTTP_POST, reboot);
-    server.on("/reset", HTTP_POST, []() {
+    server.onNotFound([](AsyncWebServerRequest *request) {
+        reply(request, 404, "text/html", PAGE_404_HTML_GZ, sizeof(PAGE_404_HTML_GZ));
+    });
+
+    server.on("/run", HTTP_POST, [](AsyncWebServerRequest *request) {
+        handleDuckyScript(request);
+    });
+    server.on("/settings", HTTP_GET, [](AsyncWebServerRequest *request) {
+        getSettings(request);
+    });
+    server.on("/settings", HTTP_POST, [](AsyncWebServerRequest *request) {
+        postSettings(request);
+    });
+    server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
+        reboot(request);
+    });
+    server.on("/reset", HTTP_POST, [](AsyncWebServerRequest *request) {
         LittleFS.remove("/config.json");
         delay(200);
-        reboot();
+        reboot(request);
     });
-    server.onNotFound(handle404);
 }
 
-void handleIndex() {
-    reply(&server, 200, "text/html", PAGE_INDEX_HTML_GZ, sizeof(PAGE_INDEX_HTML_GZ));
-}
-
-void handleSettings() {
-    reply(&server, 200, "text/html", PAGE_SETTINGS_HTML_GZ, sizeof(PAGE_SETTINGS_HTML_GZ));
-}
-
-void handleMainJS() {
-    reply(&server, 200, "application/javascript", PAGE_MAIN_JS_GZ, sizeof(PAGE_MAIN_JS_GZ));
-}
-
-void handleSettingsJS() {
-    reply(&server, 200, "application/javascript", PAGE_SETTINGS_JS_GZ, sizeof(PAGE_SETTINGS_JS_GZ));
-}
-
-void handleEditorJS() {
-    reply(&server, 200, "application/javascript", PAGE_EDITOR_JS_GZ, sizeof(PAGE_EDITOR_JS_GZ));
-}
-
-void handleCSS() {
-    reply(&server, 200, "text/css", PAGE_STYLE_CSS_GZ, sizeof(PAGE_STYLE_CSS_GZ));
-}
-
-void handle404() {
-    reply(&server, 404, "text/html", PAGE_404_HTML_GZ, sizeof(PAGE_404_HTML_GZ));
-}
-
-void handleDuckyScript() {
-    if (server.hasArg("script")) {
-        String errorMsg;
-        String script = server.arg("script");
-        debugf("Script recieved:\n%s\n", script.c_str());
-        
-        if (duckyparser::execute(script, errorMsg)) {
-            server.send(200, "text/html", "Script executed successfully");
-        } else {
-            server.send(400, "text/html", "[Error] " + errorMsg);
-        }
-
-    } else {
-        server.send(400, "text/html", "Error: missing script parameter.");
-    }
-}
-
-void getSettings() {
-    server.send(200, "application/json", settings::getSettingsJson());
-}
-
-void postSettings() {
-    if (!server.hasArg("plain")) {
-        server.send(400, "text/plain", "Missing JSON body");
+void handleDuckyScript(AsyncWebServerRequest *request) {
+    if (!request->hasArg("script")) {
+        request->send(400, "text/html", "Error: missing script parameter.");
         return;
     }
 
-    String json = server.arg("plain");
-    
+    if (!pendingRequests.empty()) {
+        request->send(409, "text/plain", "A script is already running. Please wait.");
+        return;
+    }
+
+    String script = request->arg("script");
+    debugf("Script received:\n%s\n", script.c_str());
+
+    AsyncWebServerRequestPtr ptr = request->pause();
+
+    PendingRequest pending;
+    pending.requestPtr = ptr;
+    pending.script = script;
+    pending.isRunning = true;
+    pending.isCompleted = false;
+    pending.success = false;
+    pending.result = "";
+    pending.startTime = millis();
+    pendingRequests.push_back(pending);
+}
+
+void processPendingRequests() {
+    for (auto it = pendingRequests.begin(); it != pendingRequests.end(); ) {
+        PendingRequest& pending = *it;
+
+        if (pending.isCompleted) {
+            auto shared = pending.requestPtr.lock();
+            if (shared) {
+                String response = pending.success ? "Script executed successfully " : "[Error] " + pending.result;
+                unsigned long execTime = millis() - pending.startTime;
+                if (execTime >= 1000) {
+                    float seconds = execTime / 1000.0f;
+                    response += "(" + String(seconds, 2) + "s)";
+                } else {
+                    response += "(" + String(execTime) + "ms)";
+                }
+                shared->send(pending.success ? 200 : 400, "text/html", response);
+            }
+            it = pendingRequests.erase(it);
+            continue;
+        }
+
+        if (pending.isRunning) {
+            pending.isRunning = false;
+            pending.startTime = millis();
+            String errorMsg;
+            pending.success = duckyparser::execute(pending.script, errorMsg);
+            pending.result = errorMsg;
+            pending.isCompleted = true;
+        }
+
+        if (millis() - pending.startTime > TASK_TIMEOUT_MS) {
+            pending.success = false;
+            pending.result = "Timeout (60s)";
+            pending.isCompleted = true;
+        }
+
+        ++it;
+    }
+}
+
+void getSettings(AsyncWebServerRequest *request) {
+    request->send(200, "application/json", settings::getSettingsJson());
+}
+
+void postSettings(AsyncWebServerRequest *request) {
+    if (!request->hasArg("plain")) {
+        request->send(400, "text/plain", "Missing JSON body");
+        return;
+    }
+
+    String json = request->arg("plain");
     if (!settings::setSettingsFromJson(json)) {
-        server.send(400, "text/plain", "Invalid JSON");
+        request->send(400, "text/plain", "Invalid JSON");
         return;
     }
 
     settings::save();
-    server.send(200, "text/plain", "Settings saved");
+    request->send(200, "text/plain", "Settings saved");
 }
 
-void reboot() {
-    server.send(200, "text/plain", "Rebooting...");
+void reboot(AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", "Rebooting...");
     delay(100);
     #ifdef PLATFORM_ESP32
         #include <Esp.h>
