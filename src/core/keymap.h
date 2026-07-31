@@ -73,6 +73,6 @@ const KeyMap KEY_MAP[] PROGMEM = {
     {"NUM_DOT", KEY_KP_DOT},
 };
 
-const int KEY_MAP_SIZE = sizeof(KEY_MAP) / sizeof(KEY_MAP[0]);
+constexpr int KEY_MAP_SIZE = sizeof(KEY_MAP) / sizeof(KEY_MAP[0]);
 
 uint8_t getHIDCode(const String& name);
