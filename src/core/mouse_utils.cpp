@@ -9,16 +9,16 @@ namespace mouse_utils {
         mouse.begin();
     }
 
-    void click() {
-        mouse.click();
+    void click(uint8_t b) {
+        mouse.click(b);
     }
 
-    void press() {
-        mouse.press();
+    void press(uint8_t b) {
+        mouse.press(b);
     }
 
-    void release() {
-        mouse.release();
+    void release(uint8_t b) {
+        mouse.release(b);
     }
 
     void move(uint8_t x, uint8_t y) {
@@ -27,5 +27,15 @@ namespace mouse_utils {
 
     void scroll(uint8_t amount) {
         mouse.move(0, 0, amount, 0);
+    }
+
+    uint8_t getMouseButton(String param)  {
+        if (param == "LEFT") return MOUSE_LEFT;
+        if (param == "RIGHT") return MOUSE_RIGHT;
+        if (param == "MIDDLE") return MOUSE_MIDDLE;
+        if (param == "BACKWARK") return MOUSE_BACKWARD;
+        if (param == "FORWARD") return MOUSE_FORWARD;
+        if (param == "ALL") return MOUSE_ALL;
+        return 0;
     }
 }
