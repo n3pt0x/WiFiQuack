@@ -7,15 +7,19 @@
 #include "core/wifi_manager.h"
 #include "core/web_server.h"
 #include "core/duckyparser.h"
+#include "core/mouse_utils.h"
 
 void setup() {
   Serial.begin(SERIAL_BAUD);
   settings::begin();
   keyboard_utils::begin();
+  mouse_utils::begin();
   delay(STARTUP_DELAY);
 
-  printBanner();
-  settings::flushLog();
+  #ifdef DEBUG
+    printBanner();
+    settings::flushLog();
+  #endif
 
   if (!startWiFiAP()) {
     debugln("Creating AP failed !");

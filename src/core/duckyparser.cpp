@@ -2,6 +2,7 @@
 #include "keyboard_def.h"
 #include "keyboard_utils.h"
 #include "keymap.h"
+#include "mouse_utils.h"
 #include "duckyparser.h"
 #include "utils.h"
 
@@ -136,6 +137,29 @@ namespace duckyparser {
             }
             else if (command == "ALT") {
                 if (!handleModifierKey(command, param, KEY_LEFT_ALT, errorMsg)) return false;
+            }
+            else if (command == "CLICK") {
+                mouse_utils::click();
+            }
+            else if (command == "MOVE") {
+                std::vector<String> params = splitParams(line);
+                if (params.size() != 2) {
+                    return setError(errorMsg, "SCROLL requires 2 arguments: vertical horizontal");
+                }
+
+                int vertical = params[0].toInt();
+                int horizontal = params[1].toInt();
+
+                mouse_utils::move(vertical, horizontal);
+            }
+            else if (command == "SCROLL") {
+                mouse_utils::scroll(param.toInt());
+            }
+            else if (command == "MOUSEPRESS" || command == "MOUSE_PRESS") {
+                mouse_utils::press();
+            }
+            else if (command == "MOUSERELEASE" || command == "MOUSE_RELEASE") {
+                mouse_utils::release();
             }
             else if (command == "LOCALE") {
                 if      (param == "DE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DE);
