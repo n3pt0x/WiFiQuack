@@ -1,5 +1,4 @@
 #pragma once
-
 #include "keyboard_utils.h"
 
 namespace duckyparser {

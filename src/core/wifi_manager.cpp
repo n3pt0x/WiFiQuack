@@ -31,5 +31,5 @@ void printWiFiInfos() {
     debugf("SSID: %s\n", settings::wifi_ssid.c_str());
     debugf("Password: %s\n", settings::wifi_passphrase.c_str());
     debug("IP Address: ");
-    debugln(WiFi.softAPIP());
+    debugln(ipAddr);
 }

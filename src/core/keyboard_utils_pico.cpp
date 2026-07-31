@@ -49,18 +49,18 @@ namespace keyboard_utils {
         Keyboard.releaseAll();
     }
 
-    void pressCombination(uint8_t modifier, uint8_t key) {
-        Keyboard.press(modifier);
-        Keyboard.write(key);
-        Keyboard.releaseAll();
-    }
-
     void write(const uint8_t key) {
         Keyboard.write(key);
     }
 
-    void sendString(const String& str) {
+    void print(const String& str) {
         Keyboard.print(str);
+    }
+
+    void pressCombination(uint8_t modifier, uint8_t key) {
+        Keyboard.press(modifier);
+        Keyboard.write(key);
+        Keyboard.releaseAll();
     }
 
     void pressPower() {
