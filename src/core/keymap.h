@@ -7,6 +7,10 @@ struct KeyMap {
     uint8_t code;
 };
 
+#ifndef KEY_SPACE
+    #define KEY_SPACE 0x20
+#endif
+
 const KeyMap KEY_MAP[] PROGMEM = {
     {"CTRL", KEY_LEFT_CTRL},
     {"CONTROL", KEY_LEFT_CTRL},

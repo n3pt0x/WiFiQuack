@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 void printBanner();
 bool setError(String& errorMsg, const String& msg);
