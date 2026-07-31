@@ -25,7 +25,6 @@ void getInfos(AsyncWebServerRequest *request);
 void reboot(AsyncWebServerRequest *request);
 void processPendingRequests();
 
-
 struct PendingRequest {
     AsyncWebServerRequestPtr requestPtr;
     String script;

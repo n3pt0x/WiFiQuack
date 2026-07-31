@@ -12,7 +12,7 @@
 
 AsyncWebServer server(WEB_SERVER_PORT);
 std::vector<PendingRequest> pendingRequests;
-const unsigned long TASK_TIMEOUT_MS = 60000;
+const unsigned long TASK_TIMEOUT_MS = 300000;
 
 void reply(AsyncWebServerRequest* request, int code, const char* content_type, const uint8_t* content, size_t contentLength, std::initializer_list<Header> headers) {
     AsyncWebServerResponse* response = request->beginResponse(code, content_type, content, contentLength);
