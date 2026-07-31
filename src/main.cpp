@@ -21,14 +21,12 @@ void setup() {
     settings::flushLog();
   #endif
 
-  if (!startWiFiAP()) {
+  if (!wifi::startAP()) {
     debugln("Creating AP failed !");
-    while (true) {
-      delay(100);
-    }
+    while (true) { delay(100); }
   } else {
       debugln("AP successfully created !");
-      printWiFiInfos();
+      wifi::printWiFiInfos();
   }
   initWebServer();
 }

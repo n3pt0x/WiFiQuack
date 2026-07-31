@@ -173,14 +173,14 @@ void getInfos(AsyncWebServerRequest *request) {
     JsonObject heap = docJson["heap"].to<JsonObject>();
     
     // Network
-    network["ip_addr"] = ipAddr;
-    network["subnetmask"] = subnetmask;
-    network["gateway"] = gateway;
-    network["mac_addr"] = macAddr;
+    network["ip_addr"] = wifi::getIP();
+    network["subnetmask"] = wifi::getSubnetMask();
+    network["gateway"] = wifi::getGateway();
+    network["mac_addr"] = wifi::getMAC();
 
     // WiFi
     wifi["ssid"] = settings::wifi_ssid;
-    wifi["channel"] = channel;
+    wifi["channel"] = wifi::getMAC();
 
     #ifdef PLATFORM_ESP32
         // Heap
