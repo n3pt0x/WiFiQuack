@@ -34,23 +34,20 @@ namespace duckyparser {
         uint8_t code = getHIDCode(command);
         if (code != 0) {
             keyboard_utils::write(code);
-            return true;
         }
-
-        if (command == "POWER") {
+        else if (command == "POWER") {
             keyboard_utils::pressPower();
-            return true;
         }
-        if (command == "RESET") {
+        else if (command == "RESET") {
             keyboard_utils::pressReset();
-            return true;
         }
-        if (command == "SLEEP"){
+        else if (command == "SLEEP"){
             keyboard_utils::pressSleep();
-            return true;
         }
-        
-        return setError(errorMsg, "Unknown command: " + command);
+        else {
+            return setError(errorMsg, "Unknown command: " + command);
+        }
+        return true;
     }
 
     bool parser(String line, String& errorMsg) {
@@ -138,10 +135,17 @@ namespace duckyparser {
             else if (command == "ALT") {
                 if (!handleModifierKey(command, param, KEY_LEFT_ALT, errorMsg)) return false;
             }
-            else if (command == "CLICK") {
-                mouse_utils::click();
+            else if (command == "CLICK" || command == "MOUSE_CLICK") {
+                if (param.isEmpty()) {
+                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
+                }
+                uint8_t button = mouse_utils::getMouseButton(param);
+                if (button == 0) {
+                    return setError(errorMsg, "Invalid button: " + param);
+                }
+                mouse_utils::click(button);
             }
-            else if (command == "MOVE") {
+            else if (command == "MOVE" || command == "MOUSE_MOVE") {
                 std::vector<String> params = splitParams(line);
                 if (params.size() != 2) {
                     return setError(errorMsg, "SCROLL requires 2 arguments: vertical horizontal");
@@ -152,14 +156,28 @@ namespace duckyparser {
 
                 mouse_utils::move(vertical, horizontal);
             }
-            else if (command == "SCROLL") {
+            else if (command == "SCROLL" || command == "MOUSE_SCROLL") {
                 mouse_utils::scroll(param.toInt());
             }
             else if (command == "MOUSEPRESS" || command == "MOUSE_PRESS") {
-                mouse_utils::press();
+                if (param.isEmpty()) {
+                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
+                }
+                uint8_t button = mouse_utils::getMouseButton(param);
+                if (button == 0) {
+                    return setError(errorMsg, "Invalid button: " + param);
+                }
+                mouse_utils::press(button);
             }
             else if (command == "MOUSERELEASE" || command == "MOUSE_RELEASE") {
-                mouse_utils::release();
+                if (param.isEmpty()) {
+                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
+                }
+                uint8_t button = mouse_utils::getMouseButton(param);
+                if (button == 0) {
+                    return setError(errorMsg, "Invalid button: " + param);
+                }
+                mouse_utils::release(button);
             }
             else if (command == "LOCALE") {
                 if      (param == "DE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DE);
@@ -171,7 +189,7 @@ namespace duckyparser {
                 else if (param == "SE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_SE);
                 else if (param == "DK") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DK);
                 else {
-                    return setError(errorMsg, "Unknown keyboard locale: " + param);
+                    return setError(errorMsg, "Unknown keyboard LOCALE: " + param);
                 }
             }
             else {
