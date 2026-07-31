@@ -19,8 +19,8 @@ WiFiQuack turns your compatible board into a BadUSB device with a web interface.
 
 ## 📋 Supported Hardware
 
-- **RP2040** (with WiFi): Raspberry Pi Pico W, Adafruit QT Py RP2040, etc.
-- **RP2350** (with WiFi): Raspberry Pi Pico 2 W, etc.
+- **RP2040** (with WiFi): Raspberry Pi Pico W.
+- **RP2350** (with WiFi): Raspberry Pi Pico 2 W.
 - **ESP32-S2 / S3** (with WiFi and USB HID support)
 
 > **Note**: The board must support USB HID (keyboard emulation) and have WiFi.
