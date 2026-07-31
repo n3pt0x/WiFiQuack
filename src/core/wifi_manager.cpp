@@ -1,7 +1,12 @@
-#include <WiFi.h>
 #include "wifi_manager.h"
 #include "settings.h"
 #include "debug.h"
+
+IPAddress ipAddr(192, 168, 4, 1);
+IPAddress subnetmask(255, 255, 255, 0);
+IPAddress gateway = ipAddr;
+String macAddr;
+uint32_t channel;
 
 bool startWiFiAP() {
     #ifndef DEBUG
@@ -10,10 +15,16 @@ bool startWiFiAP() {
         esp_log_level_set("dhcpc", ESP_LOG_NONE);
     #endif
     
-    IPAddress ip (192, 168, 4, 1);
     WiFi.mode(WIFI_AP);
+
+    bool success = WiFi.softAP(settings::wifi_ssid.c_str(), settings::wifi_passphrase.c_str()) && WiFi.softAPConfig(ipAddr, gateway, subnetmask);
+
+    if (success) {
+        channel = WiFi.channel();
+        macAddr = WiFi.softAPmacAddress();
+    }
     
-    return WiFi.softAP(settings::wifi_ssid.c_str(), settings::wifi_passphrase.c_str()) && WiFi.softAPConfig(ip, ip, IPAddress(255, 255, 255, 0));
+    return success;
 }
 
 void printWiFiInfos() {

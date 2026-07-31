@@ -1,6 +1,7 @@
 #pragma once
 #include <ESPAsyncWebServer.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <initializer_list>
 
 #define WEB_SERVER_PORT 80
@@ -20,6 +21,7 @@ void reply(AsyncWebServerRequest* request, int code, const char* content_type, c
 void handleDuckyScript(AsyncWebServerRequest *request);
 void getSettings(AsyncWebServerRequest *request);
 void postSettings(AsyncWebServerRequest *request);
+void getInfos(AsyncWebServerRequest *request);
 void reboot(AsyncWebServerRequest *request);
 void processPendingRequests();
 

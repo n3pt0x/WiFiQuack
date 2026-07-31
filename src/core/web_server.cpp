@@ -1,11 +1,14 @@
 #include <Arduino.h>
 #include <LittleFS.h>
+#include <ArduinoJson.h>
+#include <vector>
 #include "web_server.h"
 #include "webfiles.h"
 #include "duckyparser.h"
+#include "wifi_manager.h"
+#include "config.h"
 #include "settings.h"
 #include "debug.h"
-#include <vector>
 
 AsyncWebServer server(WEB_SERVER_PORT);
 std::vector<PendingRequest> pendingRequests;
@@ -62,6 +65,9 @@ void initRoutes() {
     });
     server.on("/settings", HTTP_POST, [](AsyncWebServerRequest *request) {
         postSettings(request);
+    });
+    server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request) {
+        getInfos(request);
     });
     server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
         reboot(request);
@@ -158,6 +164,72 @@ void postSettings(AsyncWebServerRequest *request) {
 
     settings::save();
     request->send(200, "text/plain", "Settings saved");
+}
+
+void getInfos(AsyncWebServerRequest *request) {
+    JsonDocument docJson;
+    JsonObject network = docJson["network"].to<JsonObject>();
+    JsonObject wifi = docJson["wifi"].to<JsonObject>();
+    JsonObject heap = docJson["heap"].to<JsonObject>();
+    
+    // Network
+    network["ip_addr"] = ipAddr;
+    network["subnetmask"] = subnetmask;
+    network["gateway"] = gateway;
+    network["mac_addr"] = macAddr;
+
+    // WiFi
+    wifi["ssid"] = settings::wifi_ssid;
+    wifi["channel"] = channel;
+
+    #ifdef PLATFORM_ESP32
+        // Heap
+        uint32_t total_heap = ESP.getHeapSize();
+        uint32_t free_heap = ESP.getFreeHeap();
+        // LittleFS
+        JsonObject littleFSJson = docJson["littleFS"].to<JsonObject>();
+        size_t littleFS_total = LittleFS.totalBytes();
+        size_t littleFS_used = LittleFS.usedBytes();
+        littleFSJson["total"] = littleFS_total;
+        littleFSJson["used"] = littleFS_used;
+        littleFSJson["free"] = littleFS_total - littleFS_used;
+    #elif defined(PLATFORM_PICO)
+        uint32_t total_heap = rp2040.getTotalHeap();
+        uint32_t free_heap = rp2040.getFreeHeap();
+    #endif
+    uint32_t used_heap = total_heap - free_heap;
+
+    // Heap
+    heap["total"] = total_heap;
+    heap["used"] = used_heap;
+    heap["free"] = free_heap;
+
+    unsigned long endTime = millis() - START_TIME_BOARD;
+    String timeStr;
+    if (endTime < 1000) {
+        timeStr = String(endTime) + "ms";
+    } else {
+        unsigned long totalSeconds = endTime / 1000;
+        unsigned long minutes = totalSeconds / 60;
+        unsigned long secondes = totalSeconds % 60;
+        unsigned long hours = totalSeconds / 3600;
+
+        if (endTime < 60000) {
+            timeStr = String(totalSeconds) + "s";
+        } else if (endTime < 3600000) {
+            timeStr = String(minutes) + "m " + String(secondes) + "s";
+        } else {
+            unsigned long remainingMinutes = (totalSeconds % 3600) / 60;
+            timeStr = String(hours) + "h " + String(remainingMinutes) + "m " + String(secondes) + "s";
+        }
+    }
+
+    docJson["uptime"] = timeStr;
+
+    String finalJson;
+    serializeJson(docJson, finalJson);
+    
+    request->send(200, "application/json", finalJson);
 }
 
 void reboot(AsyncWebServerRequest *request) {
