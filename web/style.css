@@ -23,6 +23,17 @@ body {
   width: 100%;
 }
 
+.footer-links {
+  text-align: center;
+  padding: 30px 0 10px 0;
+  font-size: 14px;
+  color: #8b949e;
+}
+
+.footer-links .link:hover {
+  color: #f7a15e;
+}
+
 h1 {
   font-size: 2rem;
   font-weight: 600;
@@ -41,6 +52,12 @@ h1 .duck-icon {
   color: #8b949e;
   margin-bottom: 2rem;
   font-size: 1.1rem;
+}
+
+.link {
+  color: #f0883e;
+  text-decoration: none;
+  font-size: 1rem;
 }
 
 /* form */
@@ -67,62 +84,65 @@ textarea:focus {
 
 /* clipboard */
 .editor-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .editor-wrapper textarea {
-    padding-right: 90px;
+  padding-right: 90px;
 }
 
 .editor-btn {
-    position: absolute;
-    top: 0px;
-    background: rgba(255, 255, 255, 0.06);
-    border: none;
-    color: #8b949e;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 6px;
-    opacity: 0;
-    transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
-    z-index: 5;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    min-height: 32px;
+  position: absolute;
+  top: 0px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: #8b949e;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+  z-index: 5;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .editor-wrapper:hover .editor-btn,
 .editor-btn:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .editor-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #f0f6fc;
+  background: rgba(255, 255, 255, 0.15);
+  color: #f0f6fc;
 }
 
 .editor-btn:active {
-    transform: scale(0.92);
+  transform: scale(0.92);
 }
 
 .copy-btn {
-    right: 55px;
+  right: 55px;
 }
 
 .clean-btn {
-    right: 10px;
+  right: 10px;
 }
 
 .copy-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke: currentColor;
-    fill: none;
-    display: block;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  display: block;
 }
 
 /* button */
@@ -298,27 +318,27 @@ button[type="submit"]:disabled {
 
 /* responsive */
 @media (max-width: 600px) {
-    .editor-wrapper textarea {
-        padding-right: 80px;
-        font-size: 14px;
-    }
+  .editor-wrapper textarea {
+    padding-right: 80px;
+    font-size: 14px;
+  }
 
-    .editor-btn {
-        top: 8px;
-        font-size: 14px;
-        padding: 3px 7px;
-    }
+  .editor-btn {
+    top: 8px;
+    font-size: 14px;
+    padding: 3px 7px;
+  }
 
-    .copy-btn {
-        right: 45px;
-    }
+  .copy-btn {
+    right: 45px;
+  }
 
-    .clean-btn {
-        right: 8px;
-    }
+  .clean-btn {
+    right: 8px;
+  }
 
-    .copy-btn svg {
-        width: 14px;
-        height: 14px;
-    }
+  .copy-btn svg {
+    width: 14px;
+    height: 14px;
+  }
 }
