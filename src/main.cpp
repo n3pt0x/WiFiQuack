@@ -5,7 +5,7 @@
 #include "core/settings.h"
 #include "core/utils.h"
 #include "core/wifi_manager.h"
-#include "core/web_server.h"
+#include "core/webserver.h"
 #include "core/duckyparser.h"
 #include "core/mouse_utils.h"
 
@@ -28,9 +28,9 @@ void setup() {
       debugln("AP successfully created !");
       wifi::printWiFiInfos();
   }
-  initWebServer();
+  webserver::init();
 }
 
 void loop() {
-  processPendingRequests();
+  webserver::processPendingRequests();
 }
