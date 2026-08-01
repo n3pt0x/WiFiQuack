@@ -7,7 +7,6 @@
 #include "utils.h"
 
 namespace duckyparser {
-
     int defaultDelay = 0;
 
     void reset() {

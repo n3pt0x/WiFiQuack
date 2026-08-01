@@ -6,14 +6,12 @@
 
 #define WEB_SERVER_PORT 80
 
-struct Header {
-    const char* key;
-    const char* value;
-};
-
-static constexpr Header cache_control = {.key = "Cache-Control", .value = "max-age=3600"};
-
 namespace webserver {
+    struct Header {
+        const char* key;
+        const char* value;
+    };
+
     void init();
     void processPendingRequests();
 }

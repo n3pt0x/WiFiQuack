@@ -6,85 +6,89 @@
 #include "settings.h"
 #include "duckyparser.h"
 
-namespace keyboard_utils {
-    static Layout currentLayout = settings::keyboard_layout;
-    static bool initialized = false;
-    static USBHIDKeyboard Keyboard;
-    static USBHIDConsumerControl ConsumerControl;
+namespace {
+    using Layout = keyboard_utils::Layout;
     
-    static const uint8_t* getKeyboardLayout(Layout layout) {
+    Layout _currentLayout = settings::getKeyboardLayout();
+    bool _initialized = false;
+    USBHIDKeyboard _Keyboard;
+    USBHIDConsumerControl _ConsumerControl;
+
+    const uint8_t* getKeyboardLayout(Layout layout) {
         switch (layout) {
-            case LAYOUT_DE: return KeyboardLayout_de_DE;
-            case LAYOUT_US: return KeyboardLayout_en_US;
-            case LAYOUT_ES: return KeyboardLayout_es_ES;
-            case LAYOUT_FR: return KeyboardLayout_fr_FR;
-            case LAYOUT_IT: return KeyboardLayout_it_IT;
-            case LAYOUT_PT: return KeyboardLayout_pt_PT;
-            case LAYOUT_SE: return KeyboardLayout_sv_SE;
-            case LAYOUT_DK: return KeyboardLayout_da_DK;
+            case keyboard_utils::LAYOUT_DE: return KeyboardLayout_de_DE;
+            case keyboard_utils::LAYOUT_US: return KeyboardLayout_en_US;
+            case keyboard_utils::LAYOUT_ES: return KeyboardLayout_es_ES;
+            case keyboard_utils::LAYOUT_FR: return KeyboardLayout_fr_FR;
+            case keyboard_utils::LAYOUT_IT: return KeyboardLayout_it_IT;
+            case keyboard_utils::LAYOUT_PT: return KeyboardLayout_pt_PT;
+            case keyboard_utils::LAYOUT_SE: return KeyboardLayout_sv_SE;
+            case keyboard_utils::LAYOUT_DK: return KeyboardLayout_da_DK;
             default:        return KeyboardLayout_fr_FR;
         }
     }
+}
 
+namespace keyboard_utils {    
     void begin() {
-        Layout layout = settings::keyboard_layout;
+        Layout layout = settings::getKeyboardLayout();
 
-        if (currentLayout == layout && initialized) return;        
+        if (_currentLayout == layout && _initialized) return;        
         USB.begin();
-        Keyboard.begin(getKeyboardLayout(layout));
+        _Keyboard.begin(getKeyboardLayout(layout));
         
-        currentLayout = layout;
-        initialized = true;
+        _currentLayout = layout;
+        _initialized = true;
         duckyparser::reset();
     }
 
     void setLayout(Layout layout) {
-        settings::keyboard_layout = layout;
+        settings::setKeyboardLayout(layout);
         settings::save();
         begin();
     }
 
     void press(uint8_t key) {
-        Keyboard.press(key);
+        _Keyboard.press(key);
     }
 
     void release(uint8_t key) {
-        Keyboard.release(key);
+        _Keyboard.release(key);
     }
 
     void releaseAll() {
-        Keyboard.releaseAll();
+        _Keyboard.releaseAll();
     }
 
     void write(const uint8_t key) {
-        Keyboard.write(key);
+        _Keyboard.write(key);
     }
 
     void print(const String& str) {
-        Keyboard.print(str);
+        _Keyboard.print(str);
     }
 
     void pressCombination(uint8_t modifier, uint8_t key) {
-        Keyboard.press(modifier);
-        Keyboard.write(key);
-        Keyboard.releaseAll();
+        _Keyboard.press(modifier);
+        _Keyboard.write(key);
+        _Keyboard.releaseAll();
     }
 
     void pressPower() {
-        ConsumerControl.press(CONSUMER_CONTROL_POWER);
+        _ConsumerControl.press(CONSUMER_CONTROL_POWER);
         delay(50);
-        ConsumerControl.release();
+        _ConsumerControl.release();
     }
 
     void pressReset() {
-        ConsumerControl.press(CONSUMER_CONTROL_RESET);
+        _ConsumerControl.press(CONSUMER_CONTROL_RESET);
         delay(50);
-        ConsumerControl.release();
+        _ConsumerControl.release();
     }
 
     void pressSleep() {
-        ConsumerControl.press(CONSUMER_CONTROL_SLEEP);
+        _ConsumerControl.press(CONSUMER_CONTROL_SLEEP);
         delay(50);
-        ConsumerControl.release();
+        _ConsumerControl.release();
     }
 }

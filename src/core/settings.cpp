@@ -3,20 +3,22 @@
 #include "settings.h"
 #include "debug.h"
 
-namespace settings {
-    String wifi_ssid = "WiFiQuack";
-    String wifi_passphrase = "WiFiQuack";
-    keyboard_utils::Layout keyboard_layout = keyboard_utils::LAYOUT_FR;
-    const char* FILENAME = "/config.json";
-    const char* DEFAULT_LAYOUT_STR = "FR";
-    String logBuffer;
-    bool fsInitialized = false;
+namespace {
+    String _wifi_ssid = "WiFiQuack";
+    String _wifi_passphrase = "WiFiQuack";
+    keyboard_utils::Layout _keyboard_layout = keyboard_utils::LAYOUT_FR;
+    String _logBuffer;
+    const char* _FILENAME = "/config.json";
+    const char* _DEFAULT_LAYOUT_STR = "FR";
+    bool _fsInitialized = false;
+}
 
+namespace settings {
     String getSettingsJson() {
         String json = "{";
-        json += "\"wifi_ssid\":\"" + wifi_ssid + "\",";
-        json += "\"wifi_passphrase\":\"" + wifi_passphrase + "\",";
-        json += "\"keyboard_layout\":\"" + layoutToString(keyboard_layout) + "\"";
+        json += "\"wifi_ssid\":\"" + _wifi_ssid + "\",";
+        json += "\"wifi_passphrase\":\"" + _wifi_passphrase + "\",";
+        json += "\"keyboard_layout\":\"" + layoutToString(_keyboard_layout) + "\"";
         json += "}";
         return json;
     }
@@ -30,10 +32,10 @@ namespace settings {
             return false;
         }
 
-        wifi_ssid = doc["wifi_ssid"] | wifi_ssid;
-        wifi_passphrase = doc["wifi_passphrase"] | wifi_passphrase;
+        _wifi_ssid = doc["wifi_ssid"] | _wifi_ssid;
+        _wifi_passphrase = doc["wifi_passphrase"] | _wifi_passphrase;
         String layout_str = doc["keyboard_layout"] | "FR";
-        keyboard_layout = stringToLayout(layout_str);
+        _keyboard_layout = stringToLayout(layout_str);
         return true;
     }
 
@@ -44,7 +46,7 @@ namespace settings {
                 
                 if (!LittleFS.begin(true)) {
                     logToBuffer("LittleFS format failed. Using RAM only.");
-                    fsInitialized = false;
+                    _fsInitialized = false;
                     return false;
                 }
                 logToBuffer("LittleFS formatted successfully.");
@@ -57,10 +59,10 @@ namespace settings {
             }
         #endif
         
-        fsInitialized = true;
+        _fsInitialized = true;
         logToBuffer("LittleFS mounted successfully.");
 
-        if (!LittleFS.exists(FILENAME)) {
+        if (!LittleFS.exists(_FILENAME)) {
             logToBuffer("Config file not found. Creating default config...");
             if (!createDefaultConfig()) {
                 logToBuffer("Failed to create default config.");
@@ -73,7 +75,7 @@ namespace settings {
     }
 
     bool createDefaultConfig() {
-        fs::File configFile = LittleFS.open(FILENAME, "w");
+        fs::File configFile = LittleFS.open(_FILENAME, "w");
         if (!configFile) {
             logToBuffer("Failed to create config file.");
             return false;
@@ -95,17 +97,17 @@ namespace settings {
     }
 
     void load() {
-        if (!fsInitialized) {
+        if (!_fsInitialized) {
             logToBuffer("LittleFS not initialized, cannot load.");
             return;
         }
 
-        if (!LittleFS.exists(FILENAME)) {
+        if (!LittleFS.exists(_FILENAME)) {
             logToBuffer("Config file does not exist.");
             return;
         }
 
-        fs::File configFile = LittleFS.open(FILENAME, "r");
+        fs::File configFile = LittleFS.open(_FILENAME, "r");
         if (!configFile) {
             logToBuffer("Failed to open config file for reading.");
             return;
@@ -125,12 +127,12 @@ namespace settings {
     }
 
     void save() {
-        if (!fsInitialized) {
+        if (!_fsInitialized) {
             logToBuffer("LittleFS not initialized, cannot save.");
             return;
         }
 
-        fs::File f = LittleFS.open(FILENAME, "w");
+        fs::File f = LittleFS.open(_FILENAME, "w");
         if (!f) {
             logToBuffer("Failed to open config file for writing.");
             return;
@@ -151,12 +153,12 @@ namespace settings {
     }
 
     void verifySave(const String& expectedJson) {
-        if (!LittleFS.exists(FILENAME)) {
+        if (!LittleFS.exists(_FILENAME)) {
             logToBuffer("VERIFY ERROR: File not found after save!");
             return;
         }
 
-        fs::File f = LittleFS.open(FILENAME, "r");
+        fs::File f = LittleFS.open(_FILENAME, "r");
         if (!f) {
             logToBuffer("VERIFY ERROR: Cannot open file for verification!");
             return;
@@ -186,7 +188,7 @@ namespace settings {
             case keyboard_utils::LAYOUT_PT: return "PT";
             case keyboard_utils::LAYOUT_SE: return "SE";
             case keyboard_utils::LAYOUT_DK: return "DK";
-            default: return DEFAULT_LAYOUT_STR;
+            default: return _DEFAULT_LAYOUT_STR;
         }
     }
 
@@ -204,21 +206,37 @@ namespace settings {
     
     void logToBuffer(const char* log) {
         if (log == nullptr) return;
-        logBuffer += "[LOG] ";
-        logBuffer += log;
-        logBuffer += "\n";
+        _logBuffer += "[LOG] ";
+        _logBuffer += log;
+        _logBuffer += "\n";
     }
 
     void logToBuffer(const String& log) {
-        logBuffer += "[LOG] ";
-        logBuffer += log;
-        logBuffer += "\n";
+        _logBuffer += "[LOG] ";
+        _logBuffer += log;
+        _logBuffer += "\n";
     }
 
     void flushLog() {
-        if (logBuffer.length() > 0) {
-            debug(logBuffer);
-            logBuffer = "";
+        if (_logBuffer.length() > 0) {
+            debug(_logBuffer);
+            _logBuffer = "";
         }
+    }
+
+    String getWiFiSSID() {
+        return _wifi_ssid;
+    }
+
+    String getWiFiPassphrase() {
+        return _wifi_passphrase;
+    }
+
+    keyboard_utils::Layout getKeyboardLayout() {
+        return _keyboard_layout;
+    }
+
+    void setKeyboardLayout(keyboard_utils::Layout layout) {
+        _keyboard_layout = layout;
     }
 }

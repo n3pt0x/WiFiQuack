@@ -11,12 +11,6 @@ namespace {
 }
 
 namespace wifi {
-    IPAddress getIP()           { return _ip; }
-    IPAddress getSubnetMask()   { return _subnet; }
-    IPAddress getGateway()      { return _gateway; }
-    String getMAC()             { return _mac; }
-    uint32_t getChannel()       { return _channel; }
-
     bool startAP() {
         #ifndef DEBUG
             esp_log_level_set("wifi", ESP_LOG_NONE);
@@ -25,7 +19,7 @@ namespace wifi {
         #endif
         
         WiFi.mode(WIFI_AP);
-        bool success = WiFi.softAP(settings::wifi_ssid.c_str(), settings::wifi_passphrase.c_str()) && WiFi.softAPConfig(_ip, _gateway, _subnet);
+        bool success = WiFi.softAP(settings::getWiFiSSID().c_str(), settings::getWiFiPassphrase().c_str()) && WiFi.softAPConfig(_ip, _gateway, _subnet);
         if (success) {
             _channel = WiFi.channel();
             _mac = WiFi.softAPmacAddress();
@@ -35,8 +29,8 @@ namespace wifi {
 
     void printWiFiInfos() {
         debugln("--- WiFi Info ---");
-        debugf("SSID: %s\n", settings::wifi_ssid.c_str());
-        debugf("Password: %s\n", settings::wifi_passphrase.c_str());
+        debugf("SSID: %s\n", settings::getWiFiSSID().c_str());
+        debugf("Password: %s\n", settings::getWiFiPassphrase().c_str());
         debug("IP: ");
         debugln(_ip);
         debug("Gateway: ");
@@ -47,4 +41,10 @@ namespace wifi {
         debugln(_mac);
         debugln("-----------------");
     }
+
+    IPAddress getIP()           { return _ip; }
+    IPAddress getSubnetMask()   { return _subnet; }
+    IPAddress getGateway()      { return _gateway; }
+    String getMAC()             { return _mac; }
+    uint32_t getChannel()       { return _channel; }
 }

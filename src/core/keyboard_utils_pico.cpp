@@ -5,14 +5,16 @@
 #include "settings.h"
 #include "duckyparser.h"
 
+namespace {
+    keyboard_utils::Layout _currentLayout = settings::getKeyboardLayout();
+    bool _initialized = false;
+}
+
 namespace keyboard_utils {
-    static Layout currentLayout = settings::keyboard_layout;
-    static bool initialized = false;
-
     void begin() {
-        Layout layout = settings::keyboard_layout;
+        Layout layout = settings::getKeyboardLayout();
 
-        if (currentLayout == layout && initialized) return;
+        if (_currentLayout == layout && _initialized) return;
                 
         Keyboard.end();
         switch (layout) {
@@ -26,13 +28,13 @@ namespace keyboard_utils {
             case LAYOUT_DK: Keyboard.begin(KeyboardLayout_da_DK); break;
             default:        Keyboard.begin(KeyboardLayout_fr_FR); break;
         }
-        currentLayout = settings::keyboard_layout;
-        initialized = true;
+        _currentLayout = settings::getKeyboardLayout();
+        _initialized = true;
         duckyparser::reset();
     }
 
     void setLayout(Layout layout) {
-        settings::keyboard_layout = layout;
+        settings::setKeyboardLayout(layout);
         settings::save();
         begin();
     }
