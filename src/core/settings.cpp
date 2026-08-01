@@ -27,7 +27,7 @@ namespace settings {
         JsonDocument doc;
         DeserializationError error = deserializeJson(doc, json);
         if (error) {
-            logToBuffer("JSON parse error: ");
+            logToBuffer(F("JSON parse error: "));
             logToBuffer(error.c_str());
             return false;
         }
@@ -42,30 +42,30 @@ namespace settings {
     bool begin() {
         #ifdef PLATFORM_ESP32
             if (!LittleFS.begin()) {
-                logToBuffer("LittleFS mount failed. Attempting to format...");
+                logToBuffer(F("LittleFS mount failed. Attempting to format..."));
                 
                 if (!LittleFS.begin(true)) {
-                    logToBuffer("LittleFS format failed. Using RAM only.");
+                    logToBuffer(F("LittleFS format failed. Using RAM only."));
                     _fsInitialized = false;
                     return false;
                 }
-                logToBuffer("LittleFS formatted successfully.");
+                logToBuffer(F("LittleFS formatted successfully."));
             }
         #elifdef PLATFORM_PICO
             if (!LittleFS.begin()) {
-                logToBuffer("LittleFS mount failed. Using RAM only.");
+                logToBuffer(F("LittleFS mount failed. Using RAM only."));
                 _fsInitialized = false;
                 return false;
             }
         #endif
         
         _fsInitialized = true;
-        logToBuffer("LittleFS mounted successfully.");
+        logToBuffer(F("LittleFS mounted successfully."));
 
         if (!LittleFS.exists(_FILENAME)) {
-            logToBuffer("Config file not found. Creating default config...");
+            logToBuffer(F("Config file not found. Creating default config..."));
             if (!createDefaultConfig()) {
-                logToBuffer("Failed to create default config.");
+                logToBuffer(F("Failed to create default config."));
                 return false;
             }
         }
@@ -77,7 +77,7 @@ namespace settings {
     bool createDefaultConfig() {
         fs::File configFile = LittleFS.open(_FILENAME, "w");
         if (!configFile) {
-            logToBuffer("Failed to create config file.");
+            logToBuffer(F("Failed to create config file."));
             return false;
         }
 
@@ -87,29 +87,29 @@ namespace settings {
         configFile.close();
 
         if (written == 0) {
-            logToBuffer("Failed to write default config.");
+            logToBuffer(F("Failed to write default config."));
             return false;
         }
 
-        logToBuffer("Default config created: ");
+        logToBuffer(F("Default config created: "));
         logToBuffer(defaultConfig);
         return true;
     }
 
     void load() {
         if (!_fsInitialized) {
-            logToBuffer("LittleFS not initialized, cannot load.");
+            logToBuffer(F("LittleFS not initialized, cannot load."));
             return;
         }
 
         if (!LittleFS.exists(_FILENAME)) {
-            logToBuffer("Config file does not exist.");
+            logToBuffer(F("Config file does not exist."));
             return;
         }
 
         fs::File configFile = LittleFS.open(_FILENAME, "r");
         if (!configFile) {
-            logToBuffer("Failed to open config file for reading.");
+            logToBuffer(F("Failed to open config file for reading."));
             return;
         }
 
@@ -117,24 +117,24 @@ namespace settings {
         configFile.close();
 
         if (str.length() == 0) {
-            logToBuffer("Config file is empty.");
+            logToBuffer(F("Config file is empty."));
             return;
         }
 
-        logToBuffer("Loading config: ");
+        logToBuffer(F("Loading config: "));
         logToBuffer(str);
         setSettingsFromJson(str);
     }
 
     void save() {
         if (!_fsInitialized) {
-            logToBuffer("LittleFS not initialized, cannot save.");
+            logToBuffer(F("LittleFS not initialized, cannot save."));
             return;
         }
 
         fs::File f = LittleFS.open(_FILENAME, "w");
         if (!f) {
-            logToBuffer("Failed to open config file for writing.");
+            logToBuffer(F("Failed to open config file for writing."));
             return;
         }
 
@@ -144,23 +144,23 @@ namespace settings {
         f.close();
 
         if (written > 0) {
-            logToBuffer("Settings saved: ");
+            logToBuffer(F("Settings saved: "));
             logToBuffer(json);
             verifySave(json);
         } else {
-            logToBuffer("Failed to write settings.");
+            logToBuffer(F("Failed to write settings."));
         }
     }
 
     void verifySave(const String& expectedJson) {
         if (!LittleFS.exists(_FILENAME)) {
-            logToBuffer("VERIFY ERROR: File not found after save!");
+            logToBuffer(F("VERIFY ERROR: File not found after save!"));
             return;
         }
 
         fs::File f = LittleFS.open(_FILENAME, "r");
         if (!f) {
-            logToBuffer("VERIFY ERROR: Cannot open file for verification!");
+            logToBuffer(F("VERIFY ERROR: Cannot open file for verification!"));
             return;
         }
 
@@ -168,12 +168,12 @@ namespace settings {
         f.close();
 
         if (content == expectedJson) {
-            logToBuffer("VERIFY OK: File content matches.");
+            logToBuffer(F("VERIFY OK: File content matches."));
         } else {
-            logToBuffer("VERIFY FAILED!");
-            logToBuffer("Expected: ");
+            logToBuffer(F("VERIFY FAILED!"));
+            logToBuffer(F("Expected: "));
             logToBuffer(expectedJson);
-            logToBuffer("Got: ");
+            logToBuffer(F("Got: "));
             logToBuffer(content);
         }
     }

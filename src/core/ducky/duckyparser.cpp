@@ -103,7 +103,7 @@ namespace {
                     keyboard_utils::write(modifier);
                     keyboard_utils::write(key);
                 } else {
-                    return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
+                    return setError(errorMsg, F("KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)"));
                 }
             }
             else if (helpers::handleMouseCommand(command, param, line, errorMsg)) return true;

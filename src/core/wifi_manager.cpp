@@ -17,9 +17,12 @@ namespace {
 namespace wifi {
     bool startAP() {
         #ifndef DEBUG
-            esp_log_level_set("wifi", ESP_LOG_NONE);
-            esp_log_level_set("dhcps", ESP_LOG_NONE);
-            esp_log_level_set("dhcpc", ESP_LOG_NONE);
+            #ifdef PLATFORM_ESP32
+                esp_log_level_set("wifi", ESP_LOG_NONE);
+                esp_log_level_set("dhcps", ESP_LOG_NONE);
+                esp_log_level_set("dhcpc", ESP_LOG_NONE);
+                esp_log_level_set("esp_netif", ESP_LOG_NONE);
+            #endif
         #endif
         
         WiFi.mode(WIFI_AP);
@@ -32,18 +35,20 @@ namespace wifi {
     }
 
     void printWiFiInfos() {
-        debugln("--- WiFi Info ---");
-        debugf("SSID: %s\n", settings::getWiFiSSID().c_str());
-        debugf("Password: %s\n", settings::getWiFiPassphrase().c_str());
-        debug("IP: ");
+        debugln(F("--- WiFi Info ---"));
+        debug(F("SSID: "));
+        debugln(settings::getWiFiSSID());
+        debug(F("Password: "));
+        debugln(settings::getWiFiPassphrase());
+        debug(F("IP: "));
         debugln(_ip);
-        debug("Gateway: ");
+        debug(F("Gateway: "));
         debugln(_gateway);
-        debug("Subnet: ");
+        debug(F("Subnet: "));
         debugln(_subnet);
-        debug("MAC Addr: ");
+        debug(F("MAC Addr: "));
         debugln(_mac);
-        debugln("-----------------");
+        debugln(F("-----------------"));
     }
 
     IPAddress getIP()           { return _ip; }

@@ -24,7 +24,7 @@ namespace helpers {
         if (command == "MOVE" || command == "MOUSE_MOVE") {
             std::vector<String> params = splitParams(line);
             if (params.size() != 2) {
-                return setError(errorMsg, "MOVE requires 2 arguments: vertical horizontal");
+                return setError(errorMsg, command + " requires 2 arguments: vertical horizontal");
             }
             
             int vertical = params[0].toInt();

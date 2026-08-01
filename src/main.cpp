@@ -22,10 +22,10 @@ void setup() {
   #endif
 
   if (!wifi::startAP()) {
-    debugln("Creating AP failed !");
+    debugln(F("Creating AP failed !"));
     while (true) { delay(100); }
   } else {
-      debugln("AP successfully created !");
+      debugln(F("AP successfully created !"));
       wifi::printWiFiInfos();
   }
 
