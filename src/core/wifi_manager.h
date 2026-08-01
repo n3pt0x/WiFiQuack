@@ -8,5 +8,9 @@ namespace wifi {
     IPAddress getSubnetMask();
     IPAddress getGateway();
     String getMAC();
+    #ifdef PLATFORM_ESP32
     uint32_t getChannel();
+    #elifdef PLATFORM_PICO
+    int getChannel();
+    #endif
 }

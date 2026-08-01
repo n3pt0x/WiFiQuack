@@ -30,7 +30,6 @@ namespace keyboard_utils {
         }
         _currentLayout = settings::getKeyboardLayout();
         _initialized = true;
-        duckyparser::reset();
     }
 
     void setLayout(Layout layout) {

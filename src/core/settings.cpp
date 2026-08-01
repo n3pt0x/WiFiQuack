@@ -51,10 +51,10 @@ namespace settings {
                 }
                 logToBuffer("LittleFS formatted successfully.");
             }
-        #elif defined(PLATFORM_PICO)
+        #elifdef PLATFORM_PICO
             if (!LittleFS.begin()) {
                 logToBuffer("LittleFS mount failed. Using RAM only.");
-                fsInitialized = false;
+                _fsInitialized = false;
                 return false;
             }
         #endif

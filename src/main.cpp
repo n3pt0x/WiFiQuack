@@ -28,9 +28,14 @@ void setup() {
       debugln("AP successfully created !");
       wifi::printWiFiInfos();
   }
+
   webserver::init();
 }
 
 void loop() {
+  #ifdef PLATFORM_ESP32
   webserver::processPendingRequests();
+  #elifdef PLATFORM_PICO
+  server.handleClient();
+  #endif
 }

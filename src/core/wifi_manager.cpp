@@ -7,7 +7,11 @@ namespace {
     IPAddress _subnet(255, 255, 255, 0);
     IPAddress _gateway = _ip;
     String _mac;
+    #ifdef PLATFORM_ESP32
     uint32_t _channel;
+    #elifdef PLATFORM_PICO
+    int _channel;
+    #endif
 }
 
 namespace wifi {
@@ -46,5 +50,10 @@ namespace wifi {
     IPAddress getSubnetMask()   { return _subnet; }
     IPAddress getGateway()      { return _gateway; }
     String getMAC()             { return _mac; }
+
+    #ifdef PLATFORM_ESP32
     uint32_t getChannel()       { return _channel; }
+    #elifdef PLATFORM_PICO
+    int getChannel()       { return _channel; }
+    #endif
 }
