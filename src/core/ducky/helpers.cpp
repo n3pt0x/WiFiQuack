@@ -5,27 +5,6 @@
 #include "../keymap.h"
 #include "../utils.h"
 
-namespace {
-    const KeyMap _modifierKey[] PROGMEM = {
-        {"CTRL", KEY_LEFT_CTRL},
-        {"CTRL_RIGHT", KEY_RIGHT_CTRL},
-        {"CONTROL", KEY_LEFT_CTRL},
-        {"CONTROL_RIGHT", KEY_RIGHT_CTRL},
-
-        {"SHIFT", KEY_LEFT_SHIFT},
-        {"SHIFT_RIGHT", KEY_RIGHT_SHIFT},
-
-        {"ALT", KEY_LEFT_ALT},
-        {"ALT_RIGHT", KEY_RIGHT_ALT},
-        
-        {"GUI", KEY_LEFT_GUI},
-        {"GUI_RIGHT", KEY_RIGHT_GUI},
-        {"WINDOWS", KEY_LEFT_GUI},
-        {"WINDOWS_RIGHT", KEY_RIGHT_GUI},
-    };
-    constexpr size_t _modifierKeySize = sizeof(_modifierKey) / sizeof(_modifierKey[0]);
-}
-
 namespace helpers {
     bool handleMouseButton(const String& command, const String& param, String& errorMsg, void (*action)(uint8_t)) {
         if (param.isEmpty()) {
@@ -70,20 +49,15 @@ namespace helpers {
         return false;
     }
 
-    bool handleModifierKey(const String& command, const String& param, String& errorMsg) {
-        uint8_t HIDCodeCommand = getHIDCode(command, _modifierKey, _modifierKeySize);
-        if (HIDCodeCommand == 0) {
-            return setError(errorMsg, "Unknown modifier: " + command);
-        }
-
+    bool handleModifierKey(const String& command, const String& param, const uint8_t& hidCode, String& errorMsg) {
         if (param.length() == 1) {
-            keyboard_utils::pressCombination(HIDCodeCommand, param[0]);
+            keyboard_utils::pressCombination(hidCode, param[0]);
             return true;
         }
 
         uint8_t HIDCodeParam = getHIDCode(param);
         if (HIDCodeParam != 0) {
-            keyboard_utils::press(HIDCodeCommand);
+            keyboard_utils::press(hidCode);
             keyboard_utils::press(HIDCodeParam);
             keyboard_utils::releaseAll();
             return true;

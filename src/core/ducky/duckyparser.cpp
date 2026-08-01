@@ -6,6 +6,26 @@
 #include "../utils.h"
 
 namespace {
+    int defaultDelay = 0;
+    const KeyMap _modifierKey[] PROGMEM = {
+        {"CTRL", KEY_LEFT_CTRL},
+        {"CTRL_RIGHT", KEY_RIGHT_CTRL},
+        {"CONTROL", KEY_LEFT_CTRL},
+        {"CONTROL_RIGHT", KEY_RIGHT_CTRL},
+
+        {"SHIFT", KEY_LEFT_SHIFT},
+        {"SHIFT_RIGHT", KEY_RIGHT_SHIFT},
+
+        {"ALT", KEY_LEFT_ALT},
+        {"ALT_RIGHT", KEY_RIGHT_ALT},
+        
+        {"GUI", KEY_LEFT_GUI},
+        {"GUI_RIGHT", KEY_RIGHT_GUI},
+        {"WINDOWS", KEY_LEFT_GUI},
+        {"WINDOWS_RIGHT", KEY_RIGHT_GUI},
+    };
+    constexpr size_t _modifierKeySize = sizeof(_modifierKey) / sizeof(_modifierKey[0]);
+
     bool press(String command, String& errorMsg) {
         uint8_t code = getHIDCode(command);
         if (code != 0) {
@@ -61,16 +81,18 @@ namespace {
                 isDelay = true;
             }
             else if (command == "DEFAULTDELAY" || command == "DEFAULT_DELAY") {
-                duckyparser::defaultDelay = param.toInt();
-                if (duckyparser::defaultDelay < 0) {
+                defaultDelay = param.toInt();
+                if (defaultDelay < 0) {
                     return setError(errorMsg, "Invalid parameter for " + command + " : " + param);
                 }
-                if (duckyparser::defaultDelay < 0) duckyparser::defaultDelay = 0;
+                if (defaultDelay < 0) defaultDelay = 0;
             }
-            else if (helpers::handleModifierKey(command, param, errorMsg)) return true;
-            else if (command == "COMBO") {
-                return helpers::handleCombo(line, errorMsg);
+            else if (uint8_t HIDCodeCommand = getHIDCode(command, _modifierKey, _modifierKeySize)) {
+                if (!helpers::handleModifierKey(command, param, HIDCodeCommand, errorMsg)) {
+                    return false;
+                }
             }
+            else if (command == "COMBO") helpers::handleCombo(line, errorMsg);
             else if (command == "KEYCODE") {
                 int secondSpace = line.indexOf(' ', firstSpace + 1);
                 if (secondSpace != -1) {
@@ -103,18 +125,12 @@ namespace {
             }
         }
 
-        if (!isDelay && duckyparser::defaultDelay > 0) delay(duckyparser::defaultDelay);
+        if (!isDelay && defaultDelay > 0) delay(defaultDelay);
         return true;
     }
 }
 
 namespace duckyparser {
-    int defaultDelay = 0;
-
-    void reset() {
-        defaultDelay = 0;
-    };
-
     bool execute(const String& script, String& errorMsg) {
         if (script.length() == 0) {
             setError(errorMsg, "Empty script");
