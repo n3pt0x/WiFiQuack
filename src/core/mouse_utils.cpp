@@ -38,7 +38,7 @@ namespace mouse_utils {
         if (param == "LEFT") return MOUSE_LEFT;
         if (param == "RIGHT") return MOUSE_RIGHT;
         if (param == "MIDDLE") return MOUSE_MIDDLE;
-        if (param == "BACKWARK") return MOUSE_BACKWARD;
+        if (param == "BACKWARD") return MOUSE_BACKWARD;
         if (param == "FORWARD") return MOUSE_FORWARD;
         if (param == "ALL") return MOUSE_ALL;
         return 0;

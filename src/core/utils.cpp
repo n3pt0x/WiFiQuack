@@ -32,24 +32,21 @@ String cleanLine(String line) {
   return line;
 }
 
-std::vector<String> splitParams(const String &line){
-  std::vector<String> params;
-  String rest = line.substring(line.indexOf(' ') + 1);
+std::vector<String> splitParams(const String &line) {
+    std::vector<String> params;
+    int start = line.indexOf(' ') + 1;
+    int pos = start;
 
-  int pos = 0;
-  while (pos < rest.length())  {
-    while (pos < rest.length() && rest[pos] == ' ')
-      pos++;
-    if (pos >= rest.length())
-      break;
+    while (pos < line.length()) {
+        while (pos < line.length() && line[pos] == ' ') pos++;
+        if (pos >= line.length()) break;
 
-    int end = rest.indexOf(' ', pos);
-    if (end == -1)
-      end = rest.length();
+        int end = line.indexOf(' ', pos);
+        if (end == -1) end = line.length();
 
-    params.push_back(rest.substring(pos, end));
-    pos = end + 1;
-  }
+        params.push_back(line.substring(pos, end));
+        pos = end + 1;
+    }
 
-  return params;
+    return params;
 }

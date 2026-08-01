@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 namespace helpers {
     bool handleMouseButton(const String& command, const String& param, String& errorMsg, void (*action)(uint8_t));

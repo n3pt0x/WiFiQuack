@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "helpers.h"
 #include "duckyparser.h"
 #include "../keyboard_utils.h"
