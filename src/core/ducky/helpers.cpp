@@ -66,10 +66,6 @@ namespace helpers {
         return setError(errorMsg, "Invalid parameter for " + command + ": " + param);
     }
 
-    bool handleRepeat(const String& param, String& errorMsg) {
-        return true;
-    }
-
     bool handleCombo(const String& line, String& errorMsg) {
         std::vector<String> params = splitParams(line);
         
