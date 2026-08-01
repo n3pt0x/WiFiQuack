@@ -1,9 +1,9 @@
 #pragma once
-#include "keyboard_utils.h"
+#include <Arduino.h>
 
 namespace duckyparser {
     extern int defaultDelay;
 
-    bool execute(const String& script, String& errorMsg);
     void reset();
+    bool execute(const String& script, String& errorMsg);
 }

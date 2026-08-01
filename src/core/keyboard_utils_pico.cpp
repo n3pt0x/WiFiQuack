@@ -3,7 +3,7 @@
 #include <HID_Keyboard.h>
 #include "keyboard_utils.h"
 #include "settings.h"
-#include "duckyparser.h"
+#include "core/ducky/duckyparser.h"
 
 namespace {
     keyboard_utils::Layout _currentLayout = settings::getKeyboardLayout();

@@ -4,7 +4,7 @@
 #include <USBHIDConsumerControl.h>
 #include "keyboard_utils.h"
 #include "settings.h"
-#include "duckyparser.h"
+#include "core/ducky/duckyparser.h"
 
 namespace {
     using Layout = keyboard_utils::Layout;

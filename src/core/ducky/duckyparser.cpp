@@ -1,34 +1,11 @@
-#include <Arduino.h>
-#include "keyboard_def.h"
-#include "keyboard_utils.h"
-#include "keymap.h"
-#include "mouse_utils.h"
 #include "duckyparser.h"
-#include "utils.h"
+#include "helpers.h"
+#include "../keyboard_utils.h"
+#include "../mouse_utils.h"
+#include "../keymap.h"
+#include "../utils.h"
 
-namespace duckyparser {
-    int defaultDelay = 0;
-
-    void reset() {
-        defaultDelay = 0;
-    }
-
-    bool handleModifierKey(const String& command, const String& param, const uint8_t HIDCode, String& errorMsg) {
-        if (param.length() == 1) {
-            keyboard_utils::pressCombination(HIDCode, param[0]);
-        } else {
-            uint8_t HIDCodeParam = getHIDCode(param);
-            if (HIDCodeParam) {
-                keyboard_utils::press(HIDCode);
-                keyboard_utils::press(HIDCodeParam);
-                keyboard_utils::releaseAll();
-            } else {
-                return setError(errorMsg, "Invalid parameter for " + command + ": " + param);
-            }
-        }
-        return true;
-    }
-
+namespace {
     bool press(String command, String& errorMsg) {
         uint8_t code = getHIDCode(command);
         if (code != 0) {
@@ -84,17 +61,15 @@ namespace duckyparser {
                 isDelay = true;
             }
             else if (command == "DEFAULTDELAY" || command == "DEFAULT_DELAY") {
-                defaultDelay = param.toInt();
-                if (defaultDelay < 0) {
+                duckyparser::defaultDelay = param.toInt();
+                if (duckyparser::defaultDelay < 0) {
                     return setError(errorMsg, "Invalid parameter for " + command + " : " + param);
                 }
-                if (defaultDelay < 0) defaultDelay = 0;
+                if (duckyparser::defaultDelay < 0) duckyparser::defaultDelay = 0;
             }
-            else if (command == "GUI" || command == "WINDOWS") {
-                if (!handleModifierKey(command, param, KEY_LEFT_GUI, errorMsg)) return false;
-            }
-            else if (command == "CTRL" || command == "CONTROL") {
-                if (!handleModifierKey(command, param, KEY_LEFT_CTRL, errorMsg)) return false;
+            else if (helpers::handleModifierKey(command, param, errorMsg)) return true;
+            else if (command == "COMBO") {
+                return helpers::handleCombo(line, errorMsg);
             }
             else if (command == "KEYCODE") {
                 int secondSpace = line.indexOf(' ', firstSpace + 1);
@@ -109,75 +84,7 @@ namespace duckyparser {
                     return setError(errorMsg, "KEYCODE: missing parameters (e.g. KEYCODE 0x02 0x04)");
                 }
             }
-            else if (command == "COMBO") {
-                std::vector<String> params = splitParams(line);
-                
-                for (const auto& param : params) {
-                    if (param.length() == 1) {
-                        keyboard_utils::press(param[0]);
-                    } else {
-                        uint8_t code = getHIDCode(param);
-                        if (code != 0) {
-                            keyboard_utils::press(code);
-                        } else {
-                            errorMsg = "Unknown key in COMBO: " + param;
-                            return false;
-                        }
-                    }
-                }
-                delay(50);
-                keyboard_utils::releaseAll();
-            }
-            else if (command == "SHIFT") {
-                if (!handleModifierKey(command, param, KEY_LEFT_CTRL, errorMsg)) return false;
-            }
-            else if (command == "ALT") {
-                if (!handleModifierKey(command, param, KEY_LEFT_ALT, errorMsg)) return false;
-            }
-            else if (command == "CLICK" || command == "MOUSE_CLICK") {
-                if (param.isEmpty()) {
-                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
-                }
-                uint8_t button = mouse_utils::getMouseButton(param);
-                if (button == 0) {
-                    return setError(errorMsg, "Invalid button: " + param);
-                }
-                mouse_utils::click(button);
-            }
-            else if (command == "MOVE" || command == "MOUSE_MOVE") {
-                std::vector<String> params = splitParams(line);
-                if (params.size() != 2) {
-                    return setError(errorMsg, "SCROLL requires 2 arguments: vertical horizontal");
-                }
-
-                int vertical = params[0].toInt();
-                int horizontal = params[1].toInt();
-
-                mouse_utils::move(vertical, horizontal);
-            }
-            else if (command == "SCROLL" || command == "MOUSE_SCROLL") {
-                mouse_utils::scroll(param.toInt());
-            }
-            else if (command == "MOUSEPRESS" || command == "MOUSE_PRESS") {
-                if (param.isEmpty()) {
-                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
-                }
-                uint8_t button = mouse_utils::getMouseButton(param);
-                if (button == 0) {
-                    return setError(errorMsg, "Invalid button: " + param);
-                }
-                mouse_utils::press(button);
-            }
-            else if (command == "MOUSERELEASE" || command == "MOUSE_RELEASE") {
-                if (param.isEmpty()) {
-                    return setError(errorMsg, command + " requires 1 parameter (LEFT, RIGHT, MIDDLE, etc.)");
-                }
-                uint8_t button = mouse_utils::getMouseButton(param);
-                if (button == 0) {
-                    return setError(errorMsg, "Invalid button: " + param);
-                }
-                mouse_utils::release(button);
-            }
+            else if (helpers::handleMouseCommand(command, param, line, errorMsg)) return true;
             else if (command == "LOCALE") {
                 if      (param == "DE") keyboard_utils::setLayout(keyboard_utils::LAYOUT_DE);
                 else if (param == "US") keyboard_utils::setLayout(keyboard_utils::LAYOUT_US);
@@ -196,9 +103,17 @@ namespace duckyparser {
             }
         }
 
-        if (!isDelay && defaultDelay > 0) delay(defaultDelay);
+        if (!isDelay && duckyparser::defaultDelay > 0) delay(duckyparser::defaultDelay);
         return true;
     }
+}
+
+namespace duckyparser {
+    int defaultDelay = 0;
+
+    void reset() {
+        defaultDelay = 0;
+    };
 
     bool execute(const String& script, String& errorMsg) {
         if (script.length() == 0) {

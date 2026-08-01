@@ -13,11 +13,17 @@ struct KeyMap {
 
 const KeyMap KEY_MAP[] PROGMEM = {
     {"CTRL", KEY_LEFT_CTRL},
+    {"CTRL_RIGHT", KEY_RIGHT_CTRL},
     {"CONTROL", KEY_LEFT_CTRL},
+    {"CONTROL_RIGHT", KEY_RIGHT_CTRL},
     {"SHIFT", KEY_LEFT_SHIFT},
+    {"SHIFT_RIGHT", KEY_RIGHT_SHIFT},
     {"ALT", KEY_LEFT_ALT},
+    {"ALT_RIGHT", KEY_RIGHT_ALT},
     {"GUI", KEY_LEFT_GUI},
+    {"GUI_RIGHT", KEY_RIGHT_GUI},
     {"WINDOWS", KEY_LEFT_GUI},
+    {"WINDOWS_RIGHT", KEY_RIGHT_GUI},
     
     {"ENTER", KEY_RETURN},
     {"ESC", KEY_ESC},
@@ -79,4 +85,4 @@ const KeyMap KEY_MAP[] PROGMEM = {
 
 constexpr int KEY_MAP_SIZE = sizeof(KEY_MAP) / sizeof(KEY_MAP[0]);
 
-uint8_t getHIDCode(const String& name);
+uint8_t getHIDCode(const String& name, const KeyMap* map = KEY_MAP, size_t mapSize = KEY_MAP_SIZE);

@@ -4,7 +4,7 @@
 #include <vector>
 #include "webserver.h"
 #include "webfiles.h"
-#include "duckyparser.h"
+#include "ducky/duckyparser.h"
 #include "wifi_manager.h"
 #include "config.h"
 #include "settings.h"

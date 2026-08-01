@@ -6,7 +6,7 @@
 #include "core/utils.h"
 #include "core/wifi_manager.h"
 #include "core/webserver.h"
-#include "core/duckyparser.h"
+#include "core/ducky/duckyparser.h"
 #include "core/mouse_utils.h"
 
 void setup() {
