@@ -52,18 +52,20 @@ namespace helpers {
             int horizontal = params[1].toInt();
 
             mouse_utils::move(vertical, horizontal);
+            return true;
         }
         else if (command == "SCROLL" || command == "MOUSE_SCROLL") {
             mouse_utils::scroll(param.toInt());
+            return true;
         }
         else if (command == "CLICK" || command == "MOUSE_CLICK") {
-            helpers::handleMouseButton(command, param, errorMsg, mouse_utils::click);
+            return helpers::handleMouseButton(command, param, errorMsg, mouse_utils::click);
         }
         else if (command == "MOUSEPRESS" || command == "MOUSE_PRESS") {
-            helpers::handleMouseButton(command, param, errorMsg, mouse_utils::press);
+            return helpers::handleMouseButton(command, param, errorMsg, mouse_utils::press);
         }
         else if (command == "MOUSERELEASE" || command == "MOUSE_RELEASE") {
-            helpers::handleMouseButton(command, param, errorMsg, mouse_utils::release);
+            return helpers::handleMouseButton(command, param, errorMsg, mouse_utils::release);
         }
         return false;
     }
