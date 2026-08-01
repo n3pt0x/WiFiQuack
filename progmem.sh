@@ -15,7 +15,7 @@ for file in $tmp_path/*; do
         extension="${file##*.}"
         name="PAGE_${basename//./_}_GZ[]"
 
-        gz_data=$(gzip -9 -c $file | xxd -i | tr -d '\n' | sed 's/}/}\n/g'; printf "\n")
+        gz_data=$(gzip -9 -c -n $file | xxd -i | tr -d '\n' | sed 's/}/}\n/g'; printf "\n")
             
         var_names+=("$name")    
         var_data+=("$gz_data")
