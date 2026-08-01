@@ -99,6 +99,74 @@ Use the **Reset Settings** button in the settings page to restore factory defaul
 
 ---
 
+## ⌨️ DuckyScript Reference
+
+WiFiQuack supports a subset of DuckyScript, extended with mouse commands.
+
+### 📝 Basic Syntax
+
+- One command per line (case-insensitive)
+- Comments: `#` or `REM`
+- Parameters are space-separated
+
+```text
+REM This is a comment
+STRING Hello, World!
+ENTER
+```
+
+### ⌨️ Keyboard Commands
+
+| Command                          | Syntax                                                  | Description                           |
+| -------------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| `STRING`                         | `STRING <text>`                                         | Types the given text                  |
+| `DELAY`                          | `DELAY <ms>`                                            | Waits for the specified milliseconds  |
+| `DEFAULTDELAY`                   | `DEFAULTDELAY <ms>`                                     | Sets a default delay between commands |
+| `ENTER`                          | `ENTER`                                                 | Presses Enter/Return                  |
+| `CTRL` / `SHIFT` / `ALT` / `GUI` | `CTRL <key>`                                            | Modifier + key combination            |
+| `COMBO`                          | `COMBO <key1> <key2> ...`                               | Presses multiple keys simultaneously  |
+| `REPEAT` / `REPLAY` (block)      | `REPEAT <N> ... ENDREPEAT` / `REPLAY <N> ... ENDREPLAY` | Repeats a block N times               |
+| `LOCALE`                         | `LOCALE <DE\|US\|ES\|FR\|IT\|PT\|SE\|DK>`               | Changes keyboard layout               |
+
+**Modifier commands** (`CTRL`, `SHIFT`, `ALT`, `GUI`) support:
+
+- Single character: `CTRL c`
+- Named key: `CTRL F4`
+- Right-side modifiers: `CTRL_RIGHT`, etc.
+
+**Special Keys:** `ESC`, `BACKSPACE`, `TAB`, `SPACE`, `MENU`, `INSERT`, `DELETE`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, `CAPSLOCK`, `PRINTSCREEN`, `SCROLLLOCK`, `PAUSE`, `UP`/`DOWN`/`LEFT`/`RIGHT`, `F1`–`F12`, `NUM_LOCK`, `NUM_0`–`NUM_9`, `NUM_DOT`, `NUM_ENTER`, `NUM_PLUS`, `NUM_MINUS`.
+
+**Power Commands:** `POWER`, `RESET`, `SLEEP`
+
+### 🖱️ Mouse Commands
+
+| Command         | Syntax                                           | Description                                    |
+| --------------- | ------------------------------------------------ | ---------------------------------------------- |
+| `MOVE`          | `MOVE <x> <y>`                                   | Moves cursor by (x, y) pixels                  |
+| `SCROLL`        | `SCROLL <amount>`                                | Scrolls wheel (positive = up, negative = down) |
+| `CLICK`         | `CLICK [LEFT\|RIGHT\|MIDDLE\|MOUSE_ALL]`         | Clicks a button (default: LEFT)                |
+| `MOUSE_PRESS`   | `MOUSE_PRESS [LEFT\|RIGHT\|MIDDLE\|MOUSE_ALL]`   | Presses and holds a button                     |
+| `MOUSE_RELEASE` | `MOUSE_RELEASE [LEFT\|RIGHT\|MIDDLE\|MOUSE_ALL]` | Releases a button                              |
+
+**Aliases:** `MOUSE_CLICK`, `MOUSE_MOVE`, `MOUSE_SCROLL`
+
+### 📦 Advanced Commands
+
+| Command          | Syntax                     | Description                              |
+| ---------------- | -------------------------- | ---------------------------------------- |
+| `KEYCODE`        | `KEYCODE <mod> <key>`      | Sends raw HID key codes (hex or decimal) |
+| `COMBO`          | `COMBO <key1> <key2> ...`  | Presses multiple keys simultaneously     |
+| `REPEAT` (block) | `REPEAT <N> ... ENDREPEAT` | Repeats a block N times                  |
+
+### ⚠️ Notes
+
+- **`DEFAULTDELAY`** affects all subsequent commands except `DELAY` itself.
+- **`REPEAT`** without `ENDREPEAT` repeats only the **immediately previous line**.
+- **`COMBO`** requires keys to be separated by spaces (e.g., `COMBO CTRL SHIFT ESC`).
+- **`LOCALE`** changes the keyboard layout for all subsequent keyboard commands.
+
+---
+
 ## 🔧 Troubleshooting
 
 | Issue                         | Solution                                                                                           |
