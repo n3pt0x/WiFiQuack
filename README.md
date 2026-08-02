@@ -55,6 +55,30 @@ pio run -e <PIO_ENV> -t upload
 pio device monitor -e <PIO_ENV>
 ```
 
+#### Flash release
+
+**ESP32-S2 / ESP32-S3 (esptool)**
+
+1. Download `esp32_s2_firmware.factory.bin` or `esp32_s3_firmware.factory.bin` from the release page.
+2. Connect the board in bootloader mode.
+3. Flash with:
+
+```bash
+esptool.py --chip esp32s2 write_flash 0x0 esp32_s2_firmware.factory.bin
+```
+
+**Raspberry Pi Pico W / Pico 2 W (picotool)**
+
+1. Download `pico_w_firmware.uf2` or `pico_2_w_firmware.uf2` from the release page.
+2. Press and hold the **BOOTSEL** button.
+3. Connect the Pico to your computer via USB.
+4. Release the BOOTSEL button.
+
+```bash
+picotool load -f pico_w_firmware.uf2
+picotool reboot
+```
+
 **Available environments**:
 
 - `rp2040` – Pico W (RP2040)
